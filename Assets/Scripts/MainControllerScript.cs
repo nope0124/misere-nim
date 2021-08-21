@@ -4,30 +4,39 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 
+
 public class MainControllerScript : MonoBehaviour
 {
-    // Start is called before the first frame update
     int time = 0;
+    int enemyCurCount = 0;
+    int enemyCurIndex = 0;
+    int[] decreaseAlpha = {0, 0, 0};
+    int[] decreaseCount = {0, 0, 0};
     static int[] colorCount = {7, 6, 2};
     static int[] saveCount = {7, 6, 2}; //const、リセット、記憶しておくやつ
     static int saveLevel = 0; // 猶予
     static int level = 0; // レベル
-    static int[] blueVec; // 青コマの配列
-    static int[] yellowVec; // 黄コマの配列
-    static int[] redVec; //赤コマの配列
+    static int[] blueVec; // 青コマが存在するかの配列
+    static int[] yellowVec; // 黄コマが存在するかの配列
+    static int[] redVec; //赤コマが存在するかの配列
     GameObject[] bluePawn;
     GameObject[] yellowPawn;
     GameObject[] redPawn;
     static string[] colorName = {"青", "黄", "赤"}; // 色名
     int runCount = 1;
-    static int curCount = 0;
+    static int playerColorIndex = 0;
+    static int enemyColorIndex = 0;
+    static bool isGameOver = false;
+    static bool isMyTurn = true;
+    bool isPretend = true;
     public Text blueText;
     public Text yellowText;
     public Text redText;
     public Text runText;
-    // public Text curText;
     public Text victoryText;
-    public Text turnText;
+    public Text thinkText;
+    public Image loadingImage;
+    public Text[] decreaseText; 
     public GameObject retryButton;
     public GameObject bluePrefab;
     public GameObject yellowPrefab;
@@ -35,9 +44,9 @@ public class MainControllerScript : MonoBehaviour
     public GameObject yellow;
     public Material[] materialSet;
     public MeshRenderer[] m;
-    bool isOver = false;
-    bool isTurn = true;
+    
     int countDown = 0;
+
     void makePawn(int type, int cnt) {
         switch(cnt) {
             case 1:
@@ -233,6 +242,71 @@ public class MainControllerScript : MonoBehaviour
         }
     }
 
+    public static int[] getBlueVec() {
+        return blueVec;
+    }
+
+    public static int[] getYellowVec() {
+        return yellowVec;
+    }
+
+    public static int[] getRedVec() {
+        return redVec;
+    }
+
+    public static int getPlayerColorIndex() {
+        return playerColorIndex;
+    }
+
+    public static int getEnemyColorIndex() {
+        return enemyColorIndex;
+    }
+
+    public static bool getIsMyTurn() {
+        return isMyTurn;
+    }
+
+    public static bool getIsGameOver() {
+        return isGameOver;
+    }
+
+    void endJudge() {
+        if (colorCount[0] + colorCount[1] + colorCount[2] == 0) {
+            isGameOver = true;
+            return;
+        }
+        while (colorCount[playerColorIndex] == 0) {
+            playerColorIndex = (playerColorIndex + 1) % 3;
+        }
+        fucMaterial();
+        while (colorCount[enemyColorIndex] == 0) {
+            enemyColorIndex = (enemyColorIndex + 1) % 3;
+        }
+        if (runCount > colorCount[playerColorIndex]) runCount = colorCount[playerColorIndex];
+        isMyTurn = !isMyTurn;
+        return;
+    }
+
+    void fucMaterial() {
+        for (int i = 0; i < 2; i++) {
+            m[i].material = materialSet[playerColorIndex];
+        }
+    }
+
+    void displayDecrease() {
+        for (int i = 0; i < 3; i++) {
+            if (decreaseAlpha[i] > 0) {
+                decreaseAlpha[i] -= 17;
+            } else {
+                decreaseAlpha[i] = 0;
+            }
+        }
+        for (int i = 0; i < 3; i++) {
+            decreaseText[i].text = "-" + decreaseCount[i].ToString();
+            decreaseText[i].color = new Color(1.0f, 0.0f, 0.0f, decreaseAlpha[i] / 15.0f);
+        }
+    }
+
     void Start()
     {
         level = saveLevel = ControllerScript.getLevel(); //レベル取得
@@ -254,59 +328,54 @@ public class MainControllerScript : MonoBehaviour
         makePawn(2, saveCount[2]);
     }
 
-    public static int[] getBlueVec() {
-        return blueVec;
+    void enemyPretendToThink() {
+        if (enemyCurIndex == enemyColorIndex) {
+            isPretend = false;
+        } else {
+            countDown = 40;
+            isPretend = false;
+            enemyColorIndex = enemyCurIndex;
+        }
+    }
+    
+    public void runPlayer() {
+        if (!isMyTurn || isGameOver) return; 
+        countDown = 40;
+        for (int i = 0; i < System.Math.Min(runCount, colorCount[playerColorIndex]); i++) {
+            switch(playerColorIndex) {
+                case 0:
+                    blueVec[colorCount[0] - i - 1] = 0;
+                    break;
+                case 1:
+                    yellowVec[colorCount[1] - i - 1] = 0;
+                    break;
+                case 2:
+                    redVec[colorCount[2] - i - 1] = 0;
+                    break;
+            }
+        }
+        colorCount[playerColorIndex] -= runCount;
+        if (colorCount[playerColorIndex] < 0) colorCount[playerColorIndex] = 0;
+        decreaseAlpha[playerColorIndex] = 255;
+        decreaseCount[playerColorIndex] = runCount;
+        endJudge();
     }
 
-    public static int[] getYellowVec() {
-        return yellowVec;
-    }
-
-    public static int[] getRedVec() {
-        return redVec;
-    }
-
-    void runEnemy() {
+    void runEnemyFirst() {
         int[] vec = new int[3];
         for (int i = 0; i < 3; i++) vec[i] = colorCount[i];
         System.Array.Sort(vec);
         int type = -1;
-        if (vec[0] == 0 && vec[1] == 0 && vec[2] > 1) type = 1;
-        else if (vec[0] == 0 && vec[1] == 1 && vec[2] > 1) type = 2;
-        else if (vec[0] == 1 && vec[1] == 1 && vec[2] > 1) type = 1;
+        if (vec[0] == 0 && vec[1] == 0 && vec[2] > 1) type = 1; // n 0 0
+        else if (vec[0] == 0 && vec[1] == 1 && vec[2] > 1) type = 2; // n 1 0
+        else if (vec[0] == 1 && vec[1] == 1 && vec[2] > 1) type = 1; // n 1 1
         else type = 3;
-        int cnt = 0;
-        int ind = 0;
         switch(type){
             case 1:
                 for (int i = 0; i < 3; i++) {
                     if (colorCount[i] > 1) {
-                        ind = i;
-                        cnt = colorCount[i] - 1;
-                        colorCount[i] = 1;
-                    }
-                }
-                for (int i = 0; i < cnt; i++) {
-                    int tmp = Random.Range(0, saveCount[ind]);
-                    switch(ind) {
-                        case 0:
-                            while (blueVec[tmp] == 0) {
-                                tmp = (tmp + 1) % saveCount[ind];
-                            }
-                            blueVec[tmp] = 0;
-                            break;
-                        case 1:
-                            while (yellowVec[tmp] == 0) {
-                                tmp = (tmp + 1) % saveCount[ind];
-                            }
-                            yellowVec[tmp] = 0;
-                            break;
-                        case 2:
-                            while (redVec[tmp] == 0) {
-                                tmp = (tmp + 1) % saveCount[ind];
-                            }
-                            redVec[tmp] = 0;
-                            break;
+                        enemyCurIndex = i;
+                        enemyCurCount = colorCount[i] - 1;
                     }
                 }
                 break;
@@ -314,36 +383,12 @@ public class MainControllerScript : MonoBehaviour
             case 2:
                 for (int i = 0; i < 3; i++) {
                     if (colorCount[i] > 1) {
-                        ind = i;
-                        cnt = colorCount[i];
-                        colorCount[i] = 0;
-                    }
-                }
-                for (int i = 0; i < cnt; i++) {
-                    int tmp = Random.Range(0, saveCount[ind]);
-                    switch(ind) {
-                        case 0:
-                            while (blueVec[tmp] == 0) {
-                                tmp = (tmp + 1) % saveCount[ind];
-                            }
-                            blueVec[tmp] = 0;
-                            break;
-                        case 1:
-                            while (yellowVec[tmp] == 0) {
-                                tmp = (tmp + 1) % saveCount[ind];
-                            }
-                            yellowVec[tmp] = 0;
-                            break;
-                        case 2:
-                            while (redVec[tmp] == 0) {
-                                tmp = (tmp + 1) % saveCount[ind];
-                            }
-                            redVec[tmp] = 0;
-                            break;
+                        enemyCurIndex = i;
+                        enemyCurCount = colorCount[i];
                     }
                 }
                 break;
-            
+
             case 3:
                 int diff = -1;
                 int xor = (colorCount[0] ^ colorCount[1]) ^ colorCount[2];
@@ -353,264 +398,172 @@ public class MainControllerScript : MonoBehaviour
                         int d = (xor ^ colorCount[index]) ^ i;
                         if (d == 0) {
                             diff = i;
-                            ind = index;
+                            enemyCurIndex = index;
                         }
                     }
                 }
                 if (xor == 0 || diff == -1 || level > 0) {
                     if (!(xor == 0 || diff == -1)) level--;
-                    ind = Random.Range(0, 3);
-                    while (colorCount[ind] == 0) {
-                        ind = (ind + 1) % 3;
+                    enemyCurIndex = Random.Range(0, 3);
+                    while (colorCount[enemyCurIndex] == 0) {
+                        enemyCurIndex = (enemyCurIndex + 1) % 3;
                     }
-                    cnt = Random.Range(0, colorCount[ind]) + 1;
-                    colorCount[ind] -= cnt;
-                    for (int i = 0; i < cnt; i++) {
-                        int tmp = Random.Range(0, saveCount[ind]);
-                        switch(ind) {
-                            case 0:
-                                while (blueVec[tmp] == 0) {
-                                    tmp = (tmp + 1) % saveCount[ind];
-                                }
-                                blueVec[tmp] = 0;
-                                break;
-                            case 1:
-                                while (yellowVec[tmp] == 0) {
-                                    tmp = (tmp + 1) % saveCount[ind];
-                                }
-                                yellowVec[tmp] = 0;
-                                break;
-                            case 2:
-                                while (redVec[tmp] == 0) {
-                                    tmp = (tmp + 1) % saveCount[ind];
-                                }
-                                redVec[tmp] = 0;
-                                break;
-                        }
-                    }
+                    enemyCurCount = Random.Range(0, colorCount[enemyCurIndex]) + 1;
                 } else {
-                    cnt = colorCount[ind] - diff;
-                    colorCount[ind] -= cnt;
-                    for (int i = 0; i < cnt; i++) {
-                        int tmp = Random.Range(0, saveCount[ind]);
-                        switch(ind) {
-                            case 0:
-                                while (blueVec[tmp] == 0) {
-                                    tmp = (tmp + 1) % saveCount[ind];
-                                }
-                                blueVec[tmp] = 0;
-                                break;
-                            case 1:
-                                while (yellowVec[tmp] == 0) {
-                                    tmp = (tmp + 1) % saveCount[ind];
-                                }
-                                yellowVec[tmp] = 0;
-                                break;
-                            case 2:
-                                while (redVec[tmp] == 0) {
-                                    tmp = (tmp + 1) % saveCount[ind];
-                                }
-                                redVec[tmp] = 0;
-                                break;
-                        }
-                    }
+                    enemyCurCount = colorCount[enemyCurIndex] - diff;
+                    
                 }
                 break;
+
         }
-        if (colorCount[0] + colorCount[1] + colorCount[2] == 0) return;
-        while (colorCount[curCount] == 0) {
-            curCount = (curCount + 1) % 3;
-        }
-        fucMaterial();
+        
     }
 
-    public static int getCurCount() {
-        return curCount;
+    void runEnemySecond() {
+        for (int i = 0; i < enemyCurCount; i++) {
+            switch(enemyCurIndex) {
+                case 0:
+                    blueVec[colorCount[0] - i - 1] = 0;
+                    break;
+                case 1:
+                    yellowVec[colorCount[1] - i - 1] = 0;
+                    break;
+                case 2:
+                    redVec[colorCount[2] - i - 1] = 0;
+                    break;
+            }
+        }
+        colorCount[enemyCurIndex] -= enemyCurCount;
+        decreaseAlpha[enemyCurIndex] = 255;
+        decreaseCount[enemyCurIndex] = enemyCurCount;
+        endJudge();
+        isPretend = true;
     }
 
-    void fucMaterial() {
-        for (int i = 0; i < 2; i++) {
-            m[i].material = materialSet[curCount];
-        }
-    }
-    // Update is called once per frame
     void Update()
     {
+        displayDecrease();
 
-
-        // if (Input.GetMouseButtonUp(0))
-        // {
-        //     Vector3 mousePosition = Input.mousePosition;
-        //     if (300 <= mousePosition.y && mousePosition.y <= 550) {
-        //         if (180 <= mousePosition.x && mousePosition.x < 450) curCount = 0;
-        //         if (450 <= mousePosition.x && mousePosition.x < 750) curCount = 1;
-        //         if (750 <= mousePosition.x && mousePosition.x < 1020) curCount = 2;
-        //         fucMaterial();
-        //     }
-        // }
-        
-
-        
-        if (isTurn) {
-            turnText.text = "ターン：あなた";
-        } else {
-            turnText.text = "ターン：ＣＰＵ";
-        }
         for (int i = 0; i < saveCount[0]; i++) {
             if (blueVec[i] == 1) bluePawn[i].SetActive(true);
             else bluePawn[i].SetActive(false);
         }
+
         for (int i = 0; i < saveCount[1]; i++) {
             if (yellowVec[i] == 1) yellowPawn[i].SetActive(true);
             else yellowPawn[i].SetActive(false);
         }
+
         for (int i = 0; i < saveCount[2]; i++) {
             if (redVec[i] == 1) redPawn[i].SetActive(true);
             else redPawn[i].SetActive(false);
         }
-        if (Input.GetKeyDown(KeyCode.Return)) {
-            run();
-        }
-        if (colorCount[0] == 0 && colorCount[1] == 0 && colorCount[2] == 0) isOver = true;
-        if (!isOver) {
+        
+        if (!isGameOver) {
             if (Input.GetKeyDown(KeyCode.LeftArrow)) {
-                curCount--;
-                if (curCount < 0) curCount = 2;
-                while (colorCount[curCount] == 0) {
-                    curCount = (curCount + 2) % 3;
-                }
-                fucMaterial();
+                downButton();
+            } else if (Input.GetKeyDown(KeyCode.RightArrow)) {
+                upButton();
+            } else if (Input.GetKeyDown(KeyCode.UpArrow)) {
+                plusButton();
+            } else if (Input.GetKeyDown(KeyCode.DownArrow)) {
+                minusButton();
+            } else if (Input.GetKeyDown(KeyCode.Return)) {
+                runPlayer();
             }
-            if (Input.GetKeyDown(KeyCode.RightArrow)) {
-                curCount++;
-                if (curCount > 2) curCount = 0;
-                while (colorCount[curCount] == 0) {
-                    curCount = (curCount + 1) % 3;
-                }
-                fucMaterial();
-            }
-            if (Input.GetKeyDown(KeyCode.UpArrow)) {
-                runCount++;
-                if (runCount > colorCount[curCount]) runCount = colorCount[curCount];
-            }
-            if (Input.GetKeyDown(KeyCode.DownArrow)) {
-                runCount--;
-                if (runCount < 1) runCount = 1;
-            }
-            
-            while (colorCount[curCount] == 0) {
-                curCount = (curCount + 1) % 3;
-            }
-            
-            if (runCount > colorCount[curCount]) runCount = colorCount[curCount];
-            if (!isTurn) {
+            if (isMyTurn) {
+                thinkText.enabled = false;
+                loadingImage.enabled = false;
+            } else {
+                thinkText.enabled = true;
+                loadingImage.enabled = true;
                 if (countDown > 0) {
                     countDown--;
                 } else {
-                    runEnemy();
-                    isTurn = true;
+                    if (isPretend == true) {
+                        runEnemyFirst();
+                        enemyPretendToThink();
+                    } else {
+                        runEnemySecond();
+                    }
+                    
+                    
                 }
             }
-            blueText.text = colorCount[0].ToString() + "本";
-            yellowText.text = colorCount[1].ToString() + "本";
-            redText.text = colorCount[2].ToString() + "本";
+            blueText.text = colorCount[0].ToString();
+            yellowText.text = colorCount[1].ToString();
+            redText.text = colorCount[2].ToString();
             runText.text = runCount.ToString();
-            // curText.text = colorName[curCount];
         } else {
-            blueText.text = "0本";
-            yellowText.text = "0本";
-            redText.text = "0本";
+            thinkText.enabled = false;
+            loadingImage.enabled = false;
+            blueText.text = "0";
+            yellowText.text = "0";
+            redText.text = "0";
             runText.text = "0";
             retryButton.SetActive(true);
             yellow.SetActive(false);
-            if (isTurn) victoryText.text = "You win!!";
+            if (!isMyTurn) victoryText.text = "You win!!";
             else victoryText.text = "You lose...";
             victoryText.enabled = true;
         }
         
-        
     }
 
     public void minusButton() {
-        if (!isTurn || isOver) return; 
+        if (!isMyTurn || isGameOver) return; // 相手のターン、またはゲーム終了時は機能しない
         runCount--;
         if (runCount < 1) runCount = 1;
     }
 
     public void plusButton() {
-        if (!isTurn || isOver) return; 
+        if (!isMyTurn || isGameOver) return; // 相手のターン、またはゲーム終了時は機能しない
         runCount++;
+        if (runCount > colorCount[playerColorIndex]) runCount = colorCount[playerColorIndex];
     }
 
     public void curPlusButton() {
-        if (!isTurn || isOver) return; 
-        curCount = (curCount + 1) % 3;
+        if (!isMyTurn || isGameOver) return; 
+        playerColorIndex = (playerColorIndex + 1) % 3;
     }
 
     public void upButton() {
-        if (!isTurn || isOver) return; 
-        if (colorCount[(curCount + 1) % 3] != 0) curCount = (curCount + 1) % 3;
+        if (!isMyTurn || isGameOver) return; 
+        playerColorIndex = (playerColorIndex + 1) % 3;
+        while (colorCount[playerColorIndex] == 0) {
+            playerColorIndex = (playerColorIndex + 1) % 3;
+        }
+        if (runCount > colorCount[playerColorIndex]) runCount = colorCount[playerColorIndex];
         fucMaterial();
     }
 
     public void downButton() {
-        if (!isTurn || isOver) return; 
-        if (colorCount[(curCount + 2) % 3] != 0) curCount = (curCount + 2) % 3;
+        if (!isMyTurn || isGameOver) return;
+        playerColorIndex = (playerColorIndex + 2) % 3;
+        while (colorCount[playerColorIndex] == 0) {
+            playerColorIndex = (playerColorIndex + 2) % 3;
+        }
+        if (runCount > colorCount[playerColorIndex]) runCount = colorCount[playerColorIndex];
         fucMaterial();
-    }
-
-    public void run() {
-        if (!isTurn || isOver) return; 
-        isTurn = false;
-        countDown = 30 + Random.Range(0, 60);
-        for (int i = 0; i < runCount; i++) {
-            int tmp = Random.Range(0, saveCount[curCount]);
-            switch(curCount) {
-                case 0:
-                    while (blueVec[tmp] == 0) {
-                        tmp = (tmp + 1) % saveCount[curCount];
-                    }
-                    blueVec[tmp] = 0;
-                    break;
-                case 1:
-                    while (yellowVec[tmp] == 0) {
-                        tmp = (tmp + 1) % saveCount[curCount];
-                    }
-                    yellowVec[tmp] = 0;
-                    break;
-                case 2:
-                    while (redVec[tmp] == 0) {
-                        tmp = (tmp + 1) % saveCount[curCount];
-                    }
-                    redVec[tmp] = 0;
-                    break;
-            }
-        }
-        colorCount[curCount] -= runCount;
-        if (colorCount[curCount] < 0) colorCount[curCount] = 0;
-        if (colorCount[0] == 0 && colorCount[1] == 0 && colorCount[2] == 0) return;
-        while (colorCount[curCount] == 0) {
-            curCount = (curCount + 1) % 3;
-        }
     }
 
     public void blueButton() {
         if (colorCount[0] != 0) {
-            curCount = 0;
+            playerColorIndex = 0;
         }
         fucMaterial();
     }
 
     public void yellowButton() {
         if (colorCount[1] != 0) {
-            curCount = 1;
+            playerColorIndex = 1;
         }
         fucMaterial();
     }
 
     public void redButton() {
         if (colorCount[2] != 0) {
-            curCount = 2;
+            playerColorIndex = 2;
         }
         fucMaterial();
     }
@@ -619,12 +572,12 @@ public class MainControllerScript : MonoBehaviour
     public void retry() {
         level = saveLevel;
         runCount = 1;
-        curCount = 0;
+        playerColorIndex = 0;
         fucMaterial();
-        isOver = false;
-        isTurn = true;
+        isGameOver = false;
+        isMyTurn = true;
         retryButton.SetActive(false);
-        yellow.SetActive(true);
+        // yellow.SetActive(true);
         victoryText.enabled = false;
         colorCount[0] = saveCount[0];
         colorCount[1] = saveCount[1];
