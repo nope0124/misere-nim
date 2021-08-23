@@ -1,8 +1,10 @@
-﻿using System.Collections;
+﻿using System.Linq;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using TMPro;
 
 
 public class MainControllerScript : MonoBehaviour
@@ -33,19 +35,31 @@ public class MainControllerScript : MonoBehaviour
     public Text yellowText;
     public Text redText;
     public Text runText;
-    public Text victoryText;
+    public TextMeshProUGUI winText;
+    public TextMeshProUGUI loseText;
     public Text thinkText;
     public Image loadingImage;
     public Text[] decreaseText; 
     public GameObject retryButton;
+    public GameObject prevButton;
+    public GameObject nextButton;
     public GameObject bluePrefab;
     public GameObject yellowPrefab;
     public GameObject redPrefab;
-    public GameObject yellow;
     public Material[] materialSet;
     public MeshRenderer[] m;
-    
+    Stack<int> stackIndex = new Stack<int>();
+    Stack<int> stackCount = new Stack<int>();
+    Stack<int> stackLevel = new Stack<int>();
+    Stack<int> saveStackIndex = new Stack<int>();
+    Stack<int> saveStackCount = new Stack<int>();
+    Stack<int> saveStackLevel = new Stack<int>();
     int countDown = 0;
+
+
+    private Camera mainCamera;
+    private Vector3 currentPosition = Vector3.zero;
+
 
     void makePawn(int type, int cnt) {
         switch(cnt) {
@@ -270,6 +284,47 @@ public class MainControllerScript : MonoBehaviour
         return isGameOver;
     }
 
+    public void prevFunc() {
+        if (!isMyTurn || isGameOver) return;
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < stackCount.Peek(); j++) {
+                if (stackIndex.Peek() == 0) {
+                    blueVec[colorCount[0] + j] = 1;
+                } else if (stackIndex.Peek() == 1) {
+                    yellowVec[colorCount[1] + j] = 1;
+                } else if (stackIndex.Peek() == 2) {
+                    redVec[colorCount[2] + j] = 1;
+                }
+            }
+            colorCount[stackIndex.Peek()] += stackCount.Peek();
+            saveStackIndex.Push(stackIndex.Pop());
+            saveStackCount.Push(stackCount.Pop());
+        }
+        level += stackLevel.Peek();
+        saveStackLevel.Push(stackLevel.Pop());
+    }
+
+    public void nextFunc() {
+        if (!isMyTurn || isGameOver) return;
+        for (int i = 0; i < 2; i++) {
+            for (int j = 0; j < saveStackCount.Peek(); j++) {
+                if (saveStackIndex.Peek() == 0) {
+                    blueVec[colorCount[0] - j - 1] = 0;
+                } else if (saveStackIndex.Peek() == 1) {
+                    yellowVec[colorCount[1] - j - 1] = 0;
+                } else if (saveStackIndex.Peek() == 2) {
+                    redVec[colorCount[2] - j - 1] = 0;
+                }
+            }
+            colorCount[saveStackIndex.Peek()] -= saveStackCount.Peek();
+            stackIndex.Push(saveStackIndex.Pop());
+            stackCount.Push(saveStackCount.Pop());
+        }
+        level -= saveStackLevel.Peek();
+        stackLevel.Push(saveStackLevel.Pop());
+        if (runCount > colorCount[playerColorIndex]) runCount = colorCount[playerColorIndex];
+    }
+
     void endJudge() {
         if (colorCount[0] + colorCount[1] + colorCount[2] == 0) {
             isGameOver = true;
@@ -307,8 +362,26 @@ public class MainControllerScript : MonoBehaviour
         }
     }
 
+    void init() {
+        stackIndex.Clear();
+        stackCount.Clear();
+        stackLevel.Clear();
+        saveStackIndex.Clear();
+        saveStackCount.Clear();
+        saveStackLevel.Clear();
+        level = saveLevel;
+        runCount = 1;
+        playerColorIndex = 0;
+        enemyColorIndex = 0;
+        fucMaterial();
+        isGameOver = false;
+        isMyTurn = true;
+        retryButton.SetActive(false);
+    }
+
     void Start()
     {
+        mainCamera = Camera.main;
         level = saveLevel = ControllerScript.getLevel(); //レベル取得
         colorCount[0] = saveCount[0] = NumberScript.getBlueCount(); //青の本数取得
         colorCount[1] = saveCount[1] = NumberScript.getYellowCount(); //黄の本数取得
@@ -326,6 +399,7 @@ public class MainControllerScript : MonoBehaviour
         makePawn(0, saveCount[0]);
         makePawn(1, saveCount[1]);
         makePawn(2, saveCount[2]);
+        init();
     }
 
     void enemyPretendToThink() {
@@ -339,7 +413,12 @@ public class MainControllerScript : MonoBehaviour
     }
     
     public void runPlayer() {
-        if (!isMyTurn || isGameOver) return; 
+        if (!isMyTurn || isGameOver) return;
+        saveStackIndex.Clear();
+        saveStackCount.Clear();
+        saveStackLevel.Clear();
+        stackIndex.Push(playerColorIndex);
+        stackCount.Push(runCount);
         countDown = 40;
         for (int i = 0; i < System.Math.Min(runCount, colorCount[playerColorIndex]); i++) {
             switch(playerColorIndex) {
@@ -362,6 +441,7 @@ public class MainControllerScript : MonoBehaviour
     }
 
     void runEnemyFirst() {
+        bool usedLevel = false;
         int[] vec = new int[3];
         for (int i = 0; i < 3; i++) vec[i] = colorCount[i];
         System.Array.Sort(vec);
@@ -403,7 +483,10 @@ public class MainControllerScript : MonoBehaviour
                     }
                 }
                 if (xor == 0 || diff == -1 || level > 0) {
-                    if (!(xor == 0 || diff == -1)) level--;
+                    if (!(xor == 0 || diff == -1)) {
+                        level--;
+                        usedLevel = true;
+                    }
                     enemyCurIndex = Random.Range(0, 3);
                     while (colorCount[enemyCurIndex] == 0) {
                         enemyCurIndex = (enemyCurIndex + 1) % 3;
@@ -414,7 +497,13 @@ public class MainControllerScript : MonoBehaviour
                     
                 }
                 break;
-
+        }
+        stackIndex.Push(enemyCurIndex);
+        stackCount.Push(enemyCurCount);
+        if (usedLevel) {
+            stackLevel.Push(1);
+        } else {
+            stackLevel.Push(0);
         }
         
     }
@@ -442,6 +531,7 @@ public class MainControllerScript : MonoBehaviour
 
     void Update()
     {
+        
         displayDecrease();
 
         for (int i = 0; i < saveCount[0]; i++) {
@@ -460,6 +550,19 @@ public class MainControllerScript : MonoBehaviour
         }
         
         if (!isGameOver) {
+            //戻るボタンの表示
+            if (stackCount.Count <= 0) {
+                prevButton.SetActive(false);
+            } else {
+                prevButton.SetActive(true);
+            }
+            if (saveStackCount.Count <= 0) {
+                nextButton.SetActive(false);
+            } else {
+                nextButton.SetActive(true);
+            }
+            
+            //キー受け付け
             if (Input.GetKeyDown(KeyCode.LeftArrow)) {
                 downButton();
             } else if (Input.GetKeyDown(KeyCode.RightArrow)) {
@@ -471,9 +574,41 @@ public class MainControllerScript : MonoBehaviour
             } else if (Input.GetKeyDown(KeyCode.Return)) {
                 runPlayer();
             }
+
+
+            //自分のターンじゃなかったらテキストを表示させる
             if (isMyTurn) {
                 thinkText.enabled = false;
                 loadingImage.enabled = false;
+                //クリック処理
+                //コピペしただけで理解してない
+                if (Input.GetMouseButton(0)) {
+                    var ray = mainCamera.ScreenPointToRay(Input.mousePosition);
+                    var raycastHitList = Physics.RaycastAll(ray).ToList();
+                    if (raycastHitList.Any()) {
+                        var distance = Vector3.Distance(mainCamera.transform.position, raycastHitList.First().point);
+                        var mousePosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, distance);
+                        currentPosition = mainCamera.ScreenToWorldPoint(mousePosition);
+                        currentPosition.y = 0.6f;
+                        if (-27.0f <= currentPosition.x && currentPosition.x < -8.0f && -2.0f <= currentPosition.z && currentPosition.z <= 18.0f) {
+                            if (colorCount[0] != 0) {
+                                playerColorIndex = 0;
+                            }
+                            fucMaterial();
+                        } else if (-8.0f <= currentPosition.x && currentPosition.x < 8.0f && -3.0f <= currentPosition.z && currentPosition.z <= 15.0f) {
+                            if (colorCount[1] != 0) {
+                                playerColorIndex = 1;
+                            }
+                            fucMaterial();
+                        } else if (8.0f <= currentPosition.x && currentPosition.x <= 27.0f && -2.0f <= currentPosition.z && currentPosition.z <= 18.0f) {
+                            if (colorCount[2] != 0) {
+                                playerColorIndex = 2;
+                            }
+                            fucMaterial();
+                        }
+                        if (runCount > colorCount[playerColorIndex]) runCount = colorCount[playerColorIndex];
+                    }
+                }
             } else {
                 thinkText.enabled = true;
                 loadingImage.enabled = true;
@@ -486,8 +621,6 @@ public class MainControllerScript : MonoBehaviour
                     } else {
                         runEnemySecond();
                     }
-                    
-                    
                 }
             }
             blueText.text = colorCount[0].ToString();
@@ -502,13 +635,18 @@ public class MainControllerScript : MonoBehaviour
             redText.text = "0";
             runText.text = "0";
             retryButton.SetActive(true);
-            yellow.SetActive(false);
-            if (!isMyTurn) victoryText.text = "You win!!";
-            else victoryText.text = "You lose...";
-            victoryText.enabled = true;
+            if (!isMyTurn) {
+                // victoryText.GetComponent<Outline>().effectColor = new Color(1.0f, 0.0f, 0.0f);
+                winText.enabled = true;
+            } else {
+                // victoryText.GetComponent<Outline>().effectColor = new Color(0.0f, 0.0f, 1.0f);
+                loseText.enabled = true;
+            }
+
         }
         
     }
+    
 
     public void minusButton() {
         if (!isMyTurn || isGameOver) return; // 相手のターン、またはゲーム終了時は機能しない
@@ -547,38 +685,11 @@ public class MainControllerScript : MonoBehaviour
         fucMaterial();
     }
 
-    public void blueButton() {
-        if (colorCount[0] != 0) {
-            playerColorIndex = 0;
-        }
-        fucMaterial();
-    }
-
-    public void yellowButton() {
-        if (colorCount[1] != 0) {
-            playerColorIndex = 1;
-        }
-        fucMaterial();
-    }
-
-    public void redButton() {
-        if (colorCount[2] != 0) {
-            playerColorIndex = 2;
-        }
-        fucMaterial();
-    }
-
 
     public void retry() {
-        level = saveLevel;
-        runCount = 1;
-        playerColorIndex = 0;
-        fucMaterial();
-        isGameOver = false;
-        isMyTurn = true;
-        retryButton.SetActive(false);
-        // yellow.SetActive(true);
-        victoryText.enabled = false;
+        init();
+        winText.enabled = false;
+        loseText.enabled = false;
         colorCount[0] = saveCount[0];
         colorCount[1] = saveCount[1];
         colorCount[2] = saveCount[2];
