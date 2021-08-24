@@ -54,6 +54,42 @@ public class MainControllerScript : MonoBehaviour
     Stack<int> saveStackIndex = new Stack<int>();
     Stack<int> saveStackCount = new Stack<int>();
     Stack<int> saveStackLevel = new Stack<int>();
+    float[,] pawnPositionX = {
+        {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}, // 1
+        {-2.5f, 2.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}, // 2
+        {-3.0f, 0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}, // 3
+        {-2.5f, 2.5f, -2.5f, 2.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}, // 4
+        {-3.0f, 3.0f, 0.0f, -3.0f, 3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}, // 5
+        {-4.0f, 0.0f, 4.0f, -2.0f, 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}, // 6
+        {-2.0f, 2.0f, -4.0f, 0.0f, 4.0f, -2.0f, 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}, // 7
+        {-3.0f, 0.0f, 3.0f, -2.0f, 2.0f, -3.0f, 0.0f, 3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}, // 8
+        {-4.0f, 0.0f, 4.0f, -4.0f, 0.0f, 4.0f, -4.0f, 0.0f, 4.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}, // 9
+        {-5.4f, -1.8f, 1.8f, 5.4f, -3.6f, 0.0f, 3.6f, -1.8f, 1.8f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}, // 10
+        {-4.0f, 0.0f, 4.0f, -4.0f, 0.0f, 4.0f, -4.0f, 0.0f, 4.0f, -2.0f, 2.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}, // 11
+        {-4.0f, 0.0f, 4.0f, -4.0f, 0.0f, 4.0f, -4.0f, 0.0f, 4.0f, -4.0f, 0.0f, 4.0f, 0.0f, 0.0f, 0.0f, 0.0f}, // 12
+        {-5.4f, -1.8f, 1.8f, 5.4f, -4.0f, 0.0f, 4.0f, -4.0f, 0.0f, 4.0f, -4.0f, 0.0f, 4.0f, 0.0f, 0.0f, 0.0f}, // 13
+        {-4.0f, 0.0f, 4.0f, -5.4f, -1.8f, 1.8f, 5.4f, -5.4f, -1.8f, 1.8f, 5.4f, -4.0f, 0.0f, 4.0f, 0.0f, 0.0f}, // 14
+        {-5.4f, -1.8f, 1.8f, 5.4f, -5.4f, -1.8f, 1.8f, 5.4f, -5.4f, -1.8f, 1.8f, 5.4f, -4.0f, 0.0f, 4.0f, 0.0f}, // 15
+        {-5.4f, -1.8f, 1.8f, 5.4f, -5.4f, -1.8f, 1.8f, 5.4f, -5.4f, -1.8f, 1.8f, 5.4f, -5.4f, -1.8f, 1.8f, 5.4f}, // 16
+    };
+    float[,] pawnPositionZ = {
+        {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}, // 1
+        {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}, // 2
+        {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}, // 3
+        {2.5f, 2.5f, -2.5f, -2.5f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}, // 4
+        {3.0f, 3.0f, 0.0f, -3.0f, -3.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}, // 5
+        {4.0f, 4.0f, 4.0f, 0.0f, 0.0f, -4.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}, // 6
+        {4.0f, 4.0f, 0.0f, 0.0f, 0.0f, -4.0f, -4.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}, // 7
+        {4.0f, 4.0f, 4.0f, 0.0f, 0.0f, -4.0f, -4.0f, -4.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}, // 8
+        {4.0f, 4.0f, 4.0f, 0.0f, 0.0f, 0.0f, -4.0f, -4.0f, -4.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}, // 9
+        {5.4f, 5.4f, 5.4f, 5.4f, 1.8f, 1.8f, 1.8f, -1.8f, -1.8f, -5.4f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}, // 10
+        {5.4f, 5.4f, 5.4f, 1.8f, 1.8f, 1.8f, -1.8f, -1.8f, -1.8f, -5.4f, -5.4f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}, // 11
+        {5.4f, 5.4f, 5.4f, 1.8f, 1.8f, 1.8f, -1.8f, -1.8f, -1.8f, -5.4f, -5.4f, -5.4f, 0.0f, 0.0f, 0.0f, 0.0f}, // 12
+        {5.4f, 5.4f, 5.4f, 5.4f, 1.8f, 1.8f, 1.8f, -1.8f, -1.8f, -1.8f, -5.4f, -5.4f, -5.4f, 0.0f, 0.0f, 0.0f}, // 13
+        {5.4f, 5.4f, 5.4f, 1.8f, 1.8f, 1.8f, 1.8f, -1.8f, -1.8f, -1.8f, -1.8f, -5.4f, -5.4f, -5.4f, 0.0f, 0.0f}, // 14
+        {5.4f, 5.4f, 5.4f, 5.4f, 1.8f, 1.8f, 1.8f, 1.8f, -1.8f, -1.8f, -1.8f, -1.8f, -5.4f, -5.4f, -5.4f, 0.0f}, // 15
+        {5.4f, 5.4f, 5.4f, 5.4f, 1.8f, 1.8f, 1.8f, 1.8f, -1.8f, -1.8f, -1.8f, -1.8f, -5.4f, -5.4f, -5.4f, -5.4f}, // 16
+    };
     int countDown = 0;
 
 
@@ -62,197 +98,14 @@ public class MainControllerScript : MonoBehaviour
 
 
     void makePawn(int type, int cnt) {
-        switch(cnt) {
-            case 1:
-                if (type == 0) {
-                    bluePawn[0] = Instantiate(bluePrefab, new Vector3(type * 15 - 15, 1.5f, 5), Quaternion.identity) as GameObject;
-                } else if (type == 1) {
-                    yellowPawn[0] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15, 1.5f, 5), Quaternion.identity) as GameObject;
-                } else if (type == 2) {
-                    redPawn[0] = Instantiate(redPrefab, new Vector3(type * 15 - 15, 1.5f, 5), Quaternion.identity) as GameObject;
-                }
-                break;
-            case 2:
-                if (type == 0) {
-                    bluePawn[0] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 - 2.5f, 1.5f, 5), Quaternion.identity) as GameObject;
-                    bluePawn[1] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 + 2.5f, 1.5f, 5), Quaternion.identity) as GameObject;
-                } else if (type == 1) {
-                    yellowPawn[0] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 - 2.5f, 1.5f, 5), Quaternion.identity) as GameObject;
-                    yellowPawn[1] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 + 2.5f, 1.5f, 5), Quaternion.identity) as GameObject;
-                } else if (type == 2) {
-                    redPawn[0] = Instantiate(redPrefab, new Vector3(type * 15 - 15 - 2.5f, 1.5f, 5), Quaternion.identity) as GameObject;
-                    redPawn[1] = Instantiate(redPrefab, new Vector3(type * 15 - 15 + 2.5f, 1.5f, 5), Quaternion.identity) as GameObject;
-                }
-                break;
-            case 3:
-                if (type == 0) {
-                    bluePawn[0] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 - 5, 1.5f, 5), Quaternion.identity) as GameObject;
-                    bluePawn[1] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 + 5, 1.5f, 5), Quaternion.identity) as GameObject;
-                    bluePawn[2] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 5), Quaternion.identity) as GameObject;
-                } else if (type == 1) {
-                    yellowPawn[0] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 - 5, 1.5f, 5), Quaternion.identity) as GameObject;
-                    yellowPawn[1] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 + 5, 1.5f, 5), Quaternion.identity) as GameObject;
-                    yellowPawn[2] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 5), Quaternion.identity) as GameObject;
-                } else if (type == 2) {
-                    redPawn[0] = Instantiate(redPrefab, new Vector3(type * 15 - 15 - 5, 1.5f, 5), Quaternion.identity) as GameObject;
-                    redPawn[1] = Instantiate(redPrefab, new Vector3(type * 15 - 15 + 5, 1.5f, 5), Quaternion.identity) as GameObject;
-                    redPawn[2] = Instantiate(redPrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 5), Quaternion.identity) as GameObject; 
-                }
-                break;
-            case 4:
-                if (type == 0) {
-                    bluePawn[0] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 - 2.5f, 1.5f, 7.5f), Quaternion.identity) as GameObject;
-                    bluePawn[1] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 + 2.5f, 1.5f, 7.5f), Quaternion.identity) as GameObject;
-                    bluePawn[2] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 - 2.5f, 1.5f, 2.5f), Quaternion.identity) as GameObject;
-                    bluePawn[3] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 + 2.5f, 1.5f, 2.5f), Quaternion.identity) as GameObject;
-                } else if (type == 1) {
-                    yellowPawn[0] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 - 2.5f, 1.5f, 7.5f), Quaternion.identity) as GameObject;
-                    yellowPawn[1] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 + 2.5f, 1.5f, 7.5f), Quaternion.identity) as GameObject;
-                    yellowPawn[2] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 - 2.5f, 1.5f, 2.5f), Quaternion.identity) as GameObject;
-                    yellowPawn[3] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 + 2.5f, 1.5f, 2.5f), Quaternion.identity) as GameObject;
-                } else if (type == 2) {
-                    redPawn[0] = Instantiate(redPrefab, new Vector3(type * 15 - 15 - 2.5f, 1.5f, 7.5f), Quaternion.identity) as GameObject;
-                    redPawn[1] = Instantiate(redPrefab, new Vector3(type * 15 - 15 + 2.5f, 1.5f, 7.5f), Quaternion.identity) as GameObject;
-                    redPawn[2] = Instantiate(redPrefab, new Vector3(type * 15 - 15 - 2.5f, 1.5f, 2.5f), Quaternion.identity) as GameObject;
-                    redPawn[3] = Instantiate(redPrefab, new Vector3(type * 15 - 15 + 2.5f, 1.5f, 2.5f), Quaternion.identity) as GameObject;
-                }
-                break;
-            case 5:
-                if (type == 0) {
-                    bluePawn[0] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 - 4, 1.5f, 9), Quaternion.identity) as GameObject;
-                    bluePawn[1] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 + 4, 1.5f, 9), Quaternion.identity) as GameObject;
-                    bluePawn[2] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 - 4, 1.5f, 1), Quaternion.identity) as GameObject;
-                    bluePawn[3] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 + 4, 1.5f, 1), Quaternion.identity) as GameObject;
-                    bluePawn[4] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 5), Quaternion.identity) as GameObject;
-                } else if (type == 1) {
-                    yellowPawn[0] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 - 4, 1.5f, 9), Quaternion.identity) as GameObject;
-                    yellowPawn[1] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 + 4, 1.5f, 9), Quaternion.identity) as GameObject;
-                    yellowPawn[2] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 - 4, 1.5f, 1), Quaternion.identity) as GameObject;
-                    yellowPawn[3] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 + 4, 1.5f, 1), Quaternion.identity) as GameObject;
-                    yellowPawn[4] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 5), Quaternion.identity) as GameObject;
-                } else if (type == 2) {
-                    redPawn[0] = Instantiate(redPrefab, new Vector3(type * 15 - 15 - 4, 1.5f, 9), Quaternion.identity) as GameObject;
-                    redPawn[1] = Instantiate(redPrefab, new Vector3(type * 15 - 15 + 4, 1.5f, 9), Quaternion.identity) as GameObject;
-                    redPawn[2] = Instantiate(redPrefab, new Vector3(type * 15 - 15 - 4, 1.5f, 1), Quaternion.identity) as GameObject;
-                    redPawn[3] = Instantiate(redPrefab, new Vector3(type * 15 - 15 + 4, 1.5f, 1), Quaternion.identity) as GameObject;
-                    redPawn[4] = Instantiate(redPrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 5), Quaternion.identity) as GameObject;
-                }
-                break;
-            case 6:
-                if (type == 0) {
-                    bluePawn[0] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 - 5, 1.5f, 10), Quaternion.identity) as GameObject;
-                    bluePawn[1] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 10), Quaternion.identity) as GameObject;
-                    bluePawn[2] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 + 5, 1.5f, 10), Quaternion.identity) as GameObject;
-                    bluePawn[3] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 - 2.5f, 1.5f, 5), Quaternion.identity) as GameObject;
-                    bluePawn[4] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 + 2.5f, 1.5f, 5), Quaternion.identity) as GameObject;
-                    bluePawn[5] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 0), Quaternion.identity) as GameObject;
-                } else if (type == 1) {
-                    yellowPawn[0] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 - 5, 1.5f, 10), Quaternion.identity) as GameObject;
-                    yellowPawn[1] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 10), Quaternion.identity) as GameObject;
-                    yellowPawn[2] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 + 5, 1.5f, 10), Quaternion.identity) as GameObject;
-                    yellowPawn[3] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 - 2.5f, 1.5f, 5), Quaternion.identity) as GameObject;
-                    yellowPawn[4] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 + 2.5f, 1.5f, 5), Quaternion.identity) as GameObject;
-                    yellowPawn[5] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 0), Quaternion.identity) as GameObject;
-                } else if (type == 2) {
-                    redPawn[0] = Instantiate(redPrefab, new Vector3(type * 15 - 15 - 5, 1.5f, 10), Quaternion.identity) as GameObject;
-                    redPawn[1] = Instantiate(redPrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 10), Quaternion.identity) as GameObject;
-                    redPawn[2] = Instantiate(redPrefab, new Vector3(type * 15 - 15 + 5, 1.5f, 10), Quaternion.identity) as GameObject;
-                    redPawn[3] = Instantiate(redPrefab, new Vector3(type * 15 - 15 - 2.5f, 1.5f, 5), Quaternion.identity) as GameObject;
-                    redPawn[4] = Instantiate(redPrefab, new Vector3(type * 15 - 15 + 2.5f, 1.5f, 5), Quaternion.identity) as GameObject;
-                    redPawn[5] = Instantiate(redPrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 0), Quaternion.identity) as GameObject;
-                }
-                break;
-            case 7:
-                if (type == 0) {
-                    bluePawn[0] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 - 2.5f, 1.5f, 10), Quaternion.identity) as GameObject;
-                    bluePawn[1] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 + 2.5f, 1.5f, 10), Quaternion.identity) as GameObject;
-                    bluePawn[2] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 - 5, 1.5f, 5), Quaternion.identity) as GameObject;
-                    bluePawn[3] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 - 0, 1.5f, 5), Quaternion.identity) as GameObject;
-                    bluePawn[4] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 + 5, 1.5f, 5), Quaternion.identity) as GameObject;
-                    bluePawn[5] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 - 2.5f, 1.5f, 0), Quaternion.identity) as GameObject;
-                    bluePawn[6] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 + 2.5f, 1.5f, 0), Quaternion.identity) as GameObject;
-                } else if (type == 1) {
-                    yellowPawn[0] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 - 2.5f, 1.5f, 10), Quaternion.identity) as GameObject;
-                    yellowPawn[1] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 + 2.5f, 1.5f, 10), Quaternion.identity) as GameObject;
-                    yellowPawn[2] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 - 5, 1.5f, 5), Quaternion.identity) as GameObject;
-                    yellowPawn[3] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 - 0, 1.5f, 5), Quaternion.identity) as GameObject;
-                    yellowPawn[4] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 + 5, 1.5f, 5), Quaternion.identity) as GameObject;
-                    yellowPawn[5] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 - 2.5f, 1.5f, 0), Quaternion.identity) as GameObject;
-                    yellowPawn[6] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 + 2.5f, 1.5f, 0), Quaternion.identity) as GameObject;
-                } else if (type == 2) {
-                    redPawn[0] = Instantiate(redPrefab, new Vector3(type * 15 - 15 - 2.5f, 1.5f, 10), Quaternion.identity) as GameObject;
-                    redPawn[1] = Instantiate(redPrefab, new Vector3(type * 15 - 15 + 2.5f, 1.5f, 10), Quaternion.identity) as GameObject;
-                    redPawn[2] = Instantiate(redPrefab, new Vector3(type * 15 - 15 - 5, 1.5f, 5), Quaternion.identity) as GameObject;
-                    redPawn[3] = Instantiate(redPrefab, new Vector3(type * 15 - 15 - 0, 1.5f, 5), Quaternion.identity) as GameObject;
-                    redPawn[4] = Instantiate(redPrefab, new Vector3(type * 15 - 15 + 5, 1.5f, 5), Quaternion.identity) as GameObject;
-                    redPawn[5] = Instantiate(redPrefab, new Vector3(type * 15 - 15 - 2.5f, 1.5f, 0), Quaternion.identity) as GameObject;
-                    redPawn[6] = Instantiate(redPrefab, new Vector3(type * 15 - 15 + 2.5f, 1.5f, 0), Quaternion.identity) as GameObject; 
-                }
-                break;
-            case 8:
-                if (type == 0) {
-                    bluePawn[0] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 - 5, 1.5f, 10), Quaternion.identity) as GameObject;
-                    bluePawn[1] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 10), Quaternion.identity) as GameObject;
-                    bluePawn[2] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 + 5, 1.5f, 10), Quaternion.identity) as GameObject;
-                    bluePawn[3] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 - 2.5f, 1.5f, 5), Quaternion.identity) as GameObject;
-                    bluePawn[4] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 + 2.5f, 1.5f, 5), Quaternion.identity) as GameObject;
-                    bluePawn[5] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 - 5, 1.5f, 0), Quaternion.identity) as GameObject;
-                    bluePawn[6] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 0), Quaternion.identity) as GameObject;
-                    bluePawn[7] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 + 5, 1.5f, 0), Quaternion.identity) as GameObject;
-                } else if (type == 1) {
-                    yellowPawn[0] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 - 5, 1.5f, 10), Quaternion.identity) as GameObject;
-                    yellowPawn[1] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 10), Quaternion.identity) as GameObject;
-                    yellowPawn[2] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 + 5, 1.5f, 10), Quaternion.identity) as GameObject;
-                    yellowPawn[3] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 - 2.5f, 1.5f, 5), Quaternion.identity) as GameObject;
-                    yellowPawn[4] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 + 2.5f, 1.5f, 5), Quaternion.identity) as GameObject;
-                    yellowPawn[5] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 - 5, 1.5f, 0), Quaternion.identity) as GameObject;
-                    yellowPawn[6] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 0), Quaternion.identity) as GameObject;
-                    yellowPawn[7] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 + 5, 1.5f, 0), Quaternion.identity) as GameObject;
-                } else if (type == 2) {
-                    redPawn[0] = Instantiate(redPrefab, new Vector3(type * 15 - 15 - 5, 1.5f, 10), Quaternion.identity) as GameObject;
-                    redPawn[1] = Instantiate(redPrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 10), Quaternion.identity) as GameObject;
-                    redPawn[2] = Instantiate(redPrefab, new Vector3(type * 15 - 15 + 5, 1.5f, 10), Quaternion.identity) as GameObject;
-                    redPawn[3] = Instantiate(redPrefab, new Vector3(type * 15 - 15 - 2.5f, 1.5f, 5), Quaternion.identity) as GameObject;
-                    redPawn[4] = Instantiate(redPrefab, new Vector3(type * 15 - 15 + 2.5f, 1.5f, 5), Quaternion.identity) as GameObject;
-                    redPawn[5] = Instantiate(redPrefab, new Vector3(type * 15 - 15 - 5, 1.5f, 0), Quaternion.identity) as GameObject;
-                    redPawn[6] = Instantiate(redPrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 0), Quaternion.identity) as GameObject;
-                    redPawn[7] = Instantiate(redPrefab, new Vector3(type * 15 - 15 + 5, 1.5f, 0), Quaternion.identity) as GameObject;
-                }
-                
-                break;
-            case 9:
-                if (type == 0) {
-                    bluePawn[0] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 - 5, 1.5f, 10), Quaternion.identity) as GameObject;
-                    bluePawn[1] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 10), Quaternion.identity) as GameObject;
-                    bluePawn[2] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 + 5, 1.5f, 10), Quaternion.identity) as GameObject;
-                    bluePawn[3] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 - 5, 1.5f, 5), Quaternion.identity) as GameObject;
-                    bluePawn[4] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 5), Quaternion.identity) as GameObject;
-                    bluePawn[5] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 + 5, 1.5f, 5), Quaternion.identity) as GameObject;
-                    bluePawn[6] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 - 5, 1.5f, 0), Quaternion.identity) as GameObject;
-                    bluePawn[7] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 0), Quaternion.identity) as GameObject;
-                    bluePawn[8] = Instantiate(bluePrefab, new Vector3(type * 15 - 15 + 5, 1.5f, 0), Quaternion.identity) as GameObject;
-                } else if (type == 1) {
-                    yellowPawn[0] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 - 5, 1.5f, 10), Quaternion.identity) as GameObject;
-                    yellowPawn[1] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 10), Quaternion.identity) as GameObject;
-                    yellowPawn[2] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 + 5, 1.5f, 10), Quaternion.identity) as GameObject;
-                    yellowPawn[3] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 - 5, 1.5f, 5), Quaternion.identity) as GameObject;
-                    yellowPawn[4] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 5), Quaternion.identity) as GameObject;
-                    yellowPawn[5] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 + 5, 1.5f, 5), Quaternion.identity) as GameObject;
-                    yellowPawn[6] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 - 5, 1.5f, 0), Quaternion.identity) as GameObject;
-                    yellowPawn[7] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 0), Quaternion.identity) as GameObject;
-                    yellowPawn[8] = Instantiate(yellowPrefab, new Vector3(type * 15 - 15 + 5, 1.5f, 0), Quaternion.identity) as GameObject;
-                } else if (type == 2) {
-                    redPawn[0] = Instantiate(redPrefab, new Vector3(type * 15 - 15 - 5, 1.5f, 10), Quaternion.identity) as GameObject;
-                    redPawn[1] = Instantiate(redPrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 10), Quaternion.identity) as GameObject;
-                    redPawn[2] = Instantiate(redPrefab, new Vector3(type * 15 - 15 + 5, 1.5f, 10), Quaternion.identity) as GameObject;
-                    redPawn[3] = Instantiate(redPrefab, new Vector3(type * 15 - 15 - 5, 1.5f, 5), Quaternion.identity) as GameObject;
-                    redPawn[4] = Instantiate(redPrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 5), Quaternion.identity) as GameObject;
-                    redPawn[5] = Instantiate(redPrefab, new Vector3(type * 15 - 15 + 5, 1.5f, 5), Quaternion.identity) as GameObject;
-                    redPawn[6] = Instantiate(redPrefab, new Vector3(type * 15 - 15 - 5, 1.5f, 0), Quaternion.identity) as GameObject;
-                    redPawn[7] = Instantiate(redPrefab, new Vector3(type * 15 - 15 + 0, 1.5f, 0), Quaternion.identity) as GameObject;
-                    redPawn[8] = Instantiate(redPrefab, new Vector3(type * 15 - 15 + 5, 1.5f, 0), Quaternion.identity) as GameObject; 
-                }
-                break;
+        for (int i = 0; i < cnt; i++) {
+            if (type == 0) {
+                bluePawn[i] = Instantiate(bluePrefab, new Vector3((type - 1) * 15 + pawnPositionX[cnt-1, i], 1.5f, pawnPositionZ[cnt-1, i] + 5.0f), Quaternion.identity) as GameObject;
+            } else if (type == 1) {
+                yellowPawn[i] = Instantiate(yellowPrefab, new Vector3((type - 1) * 15 + pawnPositionX[cnt-1, i], 1.5f, pawnPositionZ[cnt-1, i] + 5.0f), Quaternion.identity) as GameObject;
+            } else if (type == 2) {
+                redPawn[i] = Instantiate(redPrefab, new Vector3((type - 1) * 15 + pawnPositionX[cnt-1, i], 1.5f, pawnPositionZ[cnt-1, i] + 5.0f), Quaternion.identity) as GameObject;
+            }
         }
     }
 
@@ -322,7 +175,12 @@ public class MainControllerScript : MonoBehaviour
         }
         level -= saveStackLevel.Peek();
         stackLevel.Push(saveStackLevel.Pop());
+        while (colorCount[playerColorIndex] == 0) {
+            playerColorIndex = (playerColorIndex + 1) % 3;
+        }
+        fucMaterial();
         if (runCount > colorCount[playerColorIndex]) runCount = colorCount[playerColorIndex];
+        
     }
 
     void endJudge() {
@@ -419,7 +277,7 @@ public class MainControllerScript : MonoBehaviour
         saveStackLevel.Clear();
         stackIndex.Push(playerColorIndex);
         stackCount.Push(runCount);
-        countDown = 40;
+        countDown = 30 + Random.Range(0, 30);
         for (int i = 0; i < System.Math.Min(runCount, colorCount[playerColorIndex]); i++) {
             switch(playerColorIndex) {
                 case 0:
@@ -531,9 +389,7 @@ public class MainControllerScript : MonoBehaviour
 
     void Update()
     {
-        
         displayDecrease();
-
         for (int i = 0; i < saveCount[0]; i++) {
             if (blueVec[i] == 1) bluePawn[i].SetActive(true);
             else bluePawn[i].SetActive(false);

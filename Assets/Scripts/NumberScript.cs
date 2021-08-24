@@ -15,6 +15,7 @@ public class NumberScript : MonoBehaviour
     public GameObject[] Pawn;
 
     int curCount = 0;
+    const int pawnCount = 16;
     // Start is called before the first frame update
     void Start()
     {
@@ -43,8 +44,7 @@ public class NumberScript : MonoBehaviour
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.LeftArrow)) {
-            curCount--;
-            if (curCount < 0) curCount = 0;
+            curCount = (curCount + 2) % 3;
             for (int i = 0; i < 3; i++) {
                 if (i == curCount) {
                     Pawn[i].SendMessage("toBig");
@@ -54,8 +54,7 @@ public class NumberScript : MonoBehaviour
             }
         }
         if (Input.GetKeyDown(KeyCode.RightArrow)) {
-            curCount++;
-            if (curCount > 2) curCount = 2;
+            curCount = (curCount + 1) % 3;
             for (int i = 0; i < 3; i++) {
             if (i == curCount) {
                 Pawn[i].SendMessage("toBig");
@@ -68,15 +67,15 @@ public class NumberScript : MonoBehaviour
             switch(curCount) {
                 case 0:
                     blueCount++;
-                    if (blueCount > 9) blueCount = 9;
+                    if (blueCount > pawnCount) blueCount = pawnCount;
                     break;
                 case 1:
                     yellowCount++;
-                    if (yellowCount > 9) yellowCount = 9;
+                    if (yellowCount > pawnCount) yellowCount = pawnCount;
                     break;
                 case 2:
                     redCount++;
-                    if (redCount > 9) redCount = 9;
+                    if (redCount > pawnCount) redCount = pawnCount;
                     break;
             }
         }
@@ -102,48 +101,66 @@ public class NumberScript : MonoBehaviour
         
 
 
-        blueText.text = blueCount.ToString() + "本";
-        yellowText.text = yellowCount.ToString() + "本";
-        redText.text = redCount.ToString() + "本";
+        blueText.text = blueCount.ToString();
+        yellowText.text = yellowCount.ToString();
+        redText.text = redCount.ToString();
     }
 
     public void bluePlusButton() {
         blueCount++;
-        if (blueCount > 9) blueCount = 9;
-        if (blueCount < 1) blueCount = 1; 
+        if (blueCount > pawnCount) blueCount = pawnCount;
+        if (blueCount < 1) blueCount = 1;
+        Pawn[0].SendMessage("toBig");
+        Pawn[1].SendMessage("toSmall");
+        Pawn[2].SendMessage("toSmall");
     }
 
     public void blueMinusButton() {
         blueCount--;
-        if (blueCount > 9) blueCount = 9;
-        if (blueCount < 1) blueCount = 1; 
+        if (blueCount > pawnCount) blueCount = pawnCount;
+        if (blueCount < 1) blueCount = 1;
+        Pawn[0].SendMessage("toBig");
+        Pawn[1].SendMessage("toSmall");
+        Pawn[2].SendMessage("toSmall");
     }
 
     public void yellowPlusButton() {
         yellowCount++;
-        if (yellowCount > 9) yellowCount = 9;
-        if (yellowCount < 1) yellowCount = 1; 
+        if (yellowCount > pawnCount) yellowCount = pawnCount;
+        if (yellowCount < 1) yellowCount = 1;
+        Pawn[1].SendMessage("toBig");
+        Pawn[0].SendMessage("toSmall");
+        Pawn[2].SendMessage("toSmall");
     }
 
     public void yellowMinusButton() {
         yellowCount--;
-        if (yellowCount > 9) yellowCount = 9;
-        if (yellowCount < 1) yellowCount = 1; 
+        if (yellowCount > pawnCount) yellowCount = pawnCount;
+        if (yellowCount < 1) yellowCount = 1;
+        Pawn[1].SendMessage("toBig");
+        Pawn[0].SendMessage("toSmall");
+        Pawn[2].SendMessage("toSmall");
     }
 
     public void redPlusButton() {
         redCount++;
-        if (redCount > 9) redCount = 9;
-        if (redCount < 1) redCount = 1; 
+        if (redCount > pawnCount) redCount = pawnCount;
+        if (redCount < 1) redCount = 1;
+        Pawn[2].SendMessage("toBig");
+        Pawn[0].SendMessage("toSmall");
+        Pawn[1].SendMessage("toSmall");
     }
 
     public void redMinusButton() {
         redCount--;
-        if (redCount > 9) redCount = 9;
+        if (redCount > pawnCount) redCount = pawnCount;
         if (redCount < 1) redCount = 1;
+        Pawn[2].SendMessage("toBig");
+        Pawn[0].SendMessage("toSmall");
+        Pawn[1].SendMessage("toSmall");
     }
 
-    public void backButton() {
+    public void toTitle() {
         SceneManager.LoadScene("Start");
     }
 
@@ -182,9 +199,21 @@ public class NumberScript : MonoBehaviour
 
     public void randomButton() {
         while (true) {
-            blueCount = Random.Range(0, 9) + 1;
-            yellowCount = Random.Range(0, 9) + 1;
-            redCount = Random.Range(0, 9) + 1;
+            if (Random.Range(0, 100) < 85) {
+                blueCount = Random.Range(0, 9) + 1;
+            } else {
+                blueCount = Random.Range(9, pawnCount) + 1;
+            }
+            if (Random.Range(0, 100) < 85) {
+                yellowCount = Random.Range(0, 9) + 1;
+            } else {
+                yellowCount = Random.Range(9, pawnCount) + 1;
+            }
+            if (Random.Range(0, 100) < 85) {
+                redCount = Random.Range(0, 9) + 1;
+            } else {
+                redCount = Random.Range(9, pawnCount) + 1;
+            }
             if ((int)(blueCount ^ (yellowCount ^ redCount)) != 0) break;
         }
         
