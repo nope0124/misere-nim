@@ -91,8 +91,9 @@ public class MainControllerScript : MonoBehaviour
         {5.4f, 5.4f, 5.4f, 5.4f, 1.8f, 1.8f, 1.8f, 1.8f, -1.8f, -1.8f, -1.8f, -1.8f, -5.4f, -5.4f, -5.4f, -5.4f}, // 16
     };
     int countDown = 0;
-
-
+    GameObject[,] gotPawnPlayer = new GameObject[48, 16];
+    GameObject[,] gotPawnEnemy = new GameObject[48, 16];
+    int gotPawnIndex = 0;
     private Camera mainCamera;
     private Vector3 currentPosition = Vector3.zero;
 
@@ -100,11 +101,11 @@ public class MainControllerScript : MonoBehaviour
     void makePawn(int type, int cnt) {
         for (int i = 0; i < cnt; i++) {
             if (type == 0) {
-                bluePawn[i] = Instantiate(bluePrefab, new Vector3((type - 1) * 15 + pawnPositionX[cnt-1, i], 1.5f, pawnPositionZ[cnt-1, i] + 5.0f), Quaternion.identity) as GameObject;
+                bluePawn[i] = Instantiate(bluePrefab, new Vector3((type - 1) * 14 + pawnPositionX[cnt-1, i], 1.5f, pawnPositionZ[cnt-1, i] + 5.0f), Quaternion.identity) as GameObject;
             } else if (type == 1) {
-                yellowPawn[i] = Instantiate(yellowPrefab, new Vector3((type - 1) * 15 + pawnPositionX[cnt-1, i], 1.5f, pawnPositionZ[cnt-1, i] + 5.0f), Quaternion.identity) as GameObject;
+                yellowPawn[i] = Instantiate(yellowPrefab, new Vector3((type - 1) * 14 + pawnPositionX[cnt-1, i], 1.5f, pawnPositionZ[cnt-1, i] + 5.0f), Quaternion.identity) as GameObject;
             } else if (type == 2) {
-                redPawn[i] = Instantiate(redPrefab, new Vector3((type - 1) * 15 + pawnPositionX[cnt-1, i], 1.5f, pawnPositionZ[cnt-1, i] + 5.0f), Quaternion.identity) as GameObject;
+                redPawn[i] = Instantiate(redPrefab, new Vector3((type - 1) * 14 + pawnPositionX[cnt-1, i], 1.5f, pawnPositionZ[cnt-1, i] + 5.0f), Quaternion.identity) as GameObject;
             }
         }
     }
@@ -136,6 +137,51 @@ public class MainControllerScript : MonoBehaviour
     public static bool getIsGameOver() {
         return isGameOver;
     }
+    // void displayGotPawn(int curIndex, int curCount, int type) {
+    //     if (type == 0) {
+    //         for (int i = 0; i < curCount; i++) {
+    //             switch (curIndex) {
+    //                 case 0:
+    //                     gotPawnPlayer[gotPawnIndex, i] = Instantiate(bluePrefab, new Vector3(-24 - 3 * gotPawnIndex, 0.0f, 0 - i * 3), Quaternion.identity) as GameObject;
+    //                     break;
+    //                 case 1:
+    //                     gotPawnPlayer[gotPawnIndex, i] = Instantiate(yellowPrefab, new Vector3(-24 - 3 * gotPawnIndex, 0.0f, 0 - i * 3), Quaternion.identity) as GameObject;
+    //                     break;
+    //                 case 2:
+    //                     gotPawnPlayer[gotPawnIndex, i] = Instantiate(redPrefab, new Vector3(-24 - 3 * gotPawnIndex, 0.0f, 0 - i * 3), Quaternion.identity) as GameObject;
+    //                     break;
+    //             }
+    //             gotPawnPlayer[gotPawnIndex, i].SetActive(true);
+    //         }
+    //     } else if (type == 1) {
+    //         for (int i = 0; i < curCount; i++) {
+    //             switch (curIndex) {
+    //                 case 0:
+    //                     gotPawnEnemy[gotPawnIndex, i] = Instantiate(bluePrefab, new Vector3(24 + 3 * gotPawnIndex, 0.0f, 10 + i * 3), Quaternion.identity) as GameObject;
+    //                     break;
+    //                 case 1:
+    //                     gotPawnEnemy[gotPawnIndex, i] = Instantiate(yellowPrefab, new Vector3(24 + 3 * gotPawnIndex, 0.0f, 10 + i * 3), Quaternion.identity) as GameObject;
+    //                     break;
+    //                 case 2:
+    //                     gotPawnEnemy[gotPawnIndex, i] = Instantiate(redPrefab, new Vector3(24 + 3 * gotPawnIndex, 0.0f, 10 + i * 3), Quaternion.identity) as GameObject;
+    //                     break;
+    //             }
+    //             gotPawnEnemy[gotPawnIndex, i].SetActive(true);
+    //         }
+    //     } else if (type == 2) {
+    //         for (int i = 0; i < 16; i++) {
+    //             if (gotPawnPlayer[gotPawnIndex, i] != null) {
+    //                 gotPawnPlayer[gotPawnIndex, i].SetActive(false);
+    //                 gotPawnPlayer[gotPawnIndex, i] = null;
+    //             }
+    //             if (gotPawnEnemy[gotPawnIndex, i] != null) {
+    //                 gotPawnEnemy[gotPawnIndex, i].SetActive(false);
+    //                 gotPawnEnemy[gotPawnIndex, i] = null;
+    //             }
+    //         }
+    //     }
+        
+    // }
 
     public void prevFunc() {
         if (!isMyTurn || isGameOver) return;
@@ -155,6 +201,8 @@ public class MainControllerScript : MonoBehaviour
         }
         level += stackLevel.Peek();
         saveStackLevel.Push(stackLevel.Pop());
+        // gotPawnIndex--;
+        // displayGotPawn(-1, -1, 2);
     }
 
     public void nextFunc() {
@@ -170,9 +218,11 @@ public class MainControllerScript : MonoBehaviour
                 }
             }
             colorCount[saveStackIndex.Peek()] -= saveStackCount.Peek();
+            // displayGotPawn(saveStackIndex.Peek(), saveStackCount.Peek(), i);
             stackIndex.Push(saveStackIndex.Pop());
             stackCount.Push(saveStackCount.Pop());
         }
+        // gotPawnIndex++;
         level -= saveStackLevel.Peek();
         stackLevel.Push(saveStackLevel.Pop());
         while (colorCount[playerColorIndex] == 0) {
@@ -221,6 +271,20 @@ public class MainControllerScript : MonoBehaviour
     }
 
     void init() {
+        // for (int i = 0; i < 48; i++) {
+        //     for (int j = 0; j < 16; j++) {
+        //         if (gotPawnPlayer[i, j] != null) {
+        //             gotPawnPlayer[i, j].SetActive(false);
+        //             gotPawnPlayer[i, j] = null;
+        //         }
+        //         if (gotPawnEnemy[i, j] != null) {
+        //             gotPawnEnemy[i, j].SetActive(false);
+        //             gotPawnEnemy[i, j] = null;
+        //         }
+                
+        //     }
+        // }
+        // gotPawnIndex = 0;
         stackIndex.Clear();
         stackCount.Clear();
         stackLevel.Clear();
@@ -237,8 +301,14 @@ public class MainControllerScript : MonoBehaviour
         retryButton.SetActive(false);
     }
 
+    public GameObject fade;
+    bool fadeOut = false;
+    bool fadeIn = true;
+    float fadeCount = 1.0f;
+
     void Start()
     {
+        fade.SetActive(true);
         mainCamera = Camera.main;
         level = saveLevel = ControllerScript.getLevel(); //レベル取得
         colorCount[0] = saveCount[0] = NumberScript.getBlueCount(); //青の本数取得
@@ -295,6 +365,7 @@ public class MainControllerScript : MonoBehaviour
         if (colorCount[playerColorIndex] < 0) colorCount[playerColorIndex] = 0;
         decreaseAlpha[playerColorIndex] = 255;
         decreaseCount[playerColorIndex] = runCount;
+        // displayGotPawn(playerColorIndex, runCount, 0);
         endJudge();
     }
 
@@ -383,12 +454,37 @@ public class MainControllerScript : MonoBehaviour
         colorCount[enemyCurIndex] -= enemyCurCount;
         decreaseAlpha[enemyCurIndex] = 255;
         decreaseCount[enemyCurIndex] = enemyCurCount;
+        // displayGotPawn(enemyCurIndex, enemyCurCount, 1);
         endJudge();
         isPretend = true;
+        // gotPawnIndex++;
     }
 
     void Update()
     {
+        if (fadeIn) {
+            fadeCount -= Time.deltaTime * 2;
+            blueText.text = colorCount[0].ToString();
+            yellowText.text = colorCount[1].ToString();
+            redText.text = colorCount[2].ToString();
+            runText.text = runCount.ToString();
+            fade.GetComponent<Image>().color = new Color((float)50.0f/255.0f, (float)50.0f/255.0f, (float)50.0f/255.0f, Mathf.Max(0.0f, fadeCount));
+            if (fadeCount < 0.0f) {
+                fadeCount = 0.0f;
+                fade.SetActive(false);
+                fadeIn = false;
+            }
+            return;
+        }
+        if (fadeOut) {
+            fadeCount += Time.deltaTime * 2;
+            fade.GetComponent<Image>().color = new Color((float)50.0f/255.0f, (float)50.0f/255.0f, (float)50.0f/255.0f, Mathf.Min(1.0f, fadeCount));
+            if (fadeCount > 1.1f) {
+                fadeCount = 1.0f;
+                SceneManager.LoadScene("Start");
+            }
+            return;
+        }
         displayDecrease();
         for (int i = 0; i < saveCount[0]; i++) {
             if (blueVec[i] == 1) bluePawn[i].SetActive(true);
@@ -445,18 +541,19 @@ public class MainControllerScript : MonoBehaviour
                         var distance = Vector3.Distance(mainCamera.transform.position, raycastHitList.First().point);
                         var mousePosition = new Vector3(Input.mousePosition.x, Input.mousePosition.y, distance);
                         currentPosition = mainCamera.ScreenToWorldPoint(mousePosition);
-                        currentPosition.y = 0.6f;
-                        if (-27.0f <= currentPosition.x && currentPosition.x < -8.0f && -2.0f <= currentPosition.z && currentPosition.z <= 18.0f) {
+                        Debug.Log(currentPosition);
+                        currentPosition.y = 0.5f;
+                        if (-27.0f <= currentPosition.x && currentPosition.x < -7.5f && -2.0f <= currentPosition.z && currentPosition.z <= 18.0f) {
                             if (colorCount[0] != 0) {
                                 playerColorIndex = 0;
                             }
                             fucMaterial();
-                        } else if (-8.0f <= currentPosition.x && currentPosition.x < 8.0f && -3.0f <= currentPosition.z && currentPosition.z <= 15.0f) {
+                        } else if (-7.5f <= currentPosition.x && currentPosition.x < 7.5f && -3.0f <= currentPosition.z && currentPosition.z <= 15.0f) {
                             if (colorCount[1] != 0) {
                                 playerColorIndex = 1;
                             }
                             fucMaterial();
-                        } else if (8.0f <= currentPosition.x && currentPosition.x <= 27.0f && -2.0f <= currentPosition.z && currentPosition.z <= 18.0f) {
+                        } else if (7.5f <= currentPosition.x && currentPosition.x <= 27.0f && -2.0f <= currentPosition.z && currentPosition.z <= 18.0f) {
                             if (colorCount[2] != 0) {
                                 playerColorIndex = 2;
                             }
@@ -555,6 +652,8 @@ public class MainControllerScript : MonoBehaviour
     }
 
     public void toTitle() {
-        SceneManager.LoadScene("Start");
+        fade.SetActive(true);
+        fadeOut = true;
+        // SceneManager.LoadScene("Start");
     }
 }

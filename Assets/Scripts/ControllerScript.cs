@@ -9,14 +9,21 @@ public class ControllerScript : MonoBehaviour
     // Start is called before the first frame update
     static int level = 0;
     public GameObject game;
+    public GameObject gameEnglish;
     public GameObject startText;
     public GameObject optionText;
     public GameObject level1Text;
     public GameObject level2Text;
     public GameObject level3Text;
-    void Start()
-    {
+    public GameObject fade;
+    bool fadeOut = false;
+    bool fadeIn = true;
+    float fadeCount = 1.0f;
+    bool optionFlag = false;
+    void Start() {
+        fade.SetActive(true);
         game.SetActive(true);
+        gameEnglish.SetActive(true);
         startText.SetActive(true);
         level1Text.SetActive(false);
         level2Text.SetActive(false);
@@ -24,17 +31,48 @@ public class ControllerScript : MonoBehaviour
     }
 
     // Update is called once per frame
+    public GameObject popUp;
+    public GameObject popUpFilter;
+    public GameObject popUpClose;
     void Update()
     {
-        
+        if (fadeIn) {
+            fadeCount -= Time.deltaTime * 2;
+            fade.GetComponent<Image>().color = new Color((float)50.0f/255.0f, (float)50.0f/255.0f, (float)50.0f/255.0f, Mathf.Max(0.0f, fadeCount));
+            if (fadeCount < 0.0f) {
+                fadeCount = 0.0f;
+                fade.SetActive(false);
+                fadeIn = false;
+            }
+            return;
+        }
+        if (fadeOut) {
+            fadeCount += Time.deltaTime * 2;
+            fade.GetComponent<Image>().color = new Color((float)50.0f/255.0f, (float)50.0f/255.0f, (float)50.0f/255.0f, Mathf.Min(1.0f, fadeCount));
+            if (fadeCount > 1.1f) {
+                fadeCount = 1.0f;
+                if (optionFlag) {
+                    SceneManager.LoadScene("Option");
+                } else {
+                    SceneManager.LoadScene("Main");
+                }
+                
+            }
+            return;
+        }
+
+
     }
 
     public void optionButton(){
-        SceneManager.LoadScene("Option");
+        fade.SetActive(true);
+        fadeOut = true;
+        optionFlag = true;
     }
     
     public void startButton(){
         game.SetActive(false);
+        gameEnglish.SetActive(false);
         startText.SetActive(false);
         level1Text.SetActive(true);
         level2Text.SetActive(true);
@@ -43,17 +81,35 @@ public class ControllerScript : MonoBehaviour
 
     public void level1() {
         level = 2;
-        SceneManager.LoadScene("Main");
+        fade.SetActive(true);
+        fadeOut = true;
     }
 
     public void level2() {
         level = 1;
-        SceneManager.LoadScene("Main");
+        fade.SetActive(true);
+        fadeOut = true;
     }
 
     public void level3() {
         level = 0;
-        SceneManager.LoadScene("Main");
+        fade.SetActive(true);
+        fadeOut = true;
+    }
+
+    public void popUpOnButton() {
+        popUp.SetActive(true);
+        popUpFilter.SetActive(true);
+        popUpClose.SetActive(true);
+		popUp.GetComponent<Animator>().SetBool("PopUpOpen", false);
+        popUpFilter.GetComponent<Animator>().SetBool("PopUpFilterOpen", false);
+        popUpClose.GetComponent<Animator>().SetBool("PopUpCloseOpen", false);
+    }
+
+    public void popUpOffButton() {
+		popUp.GetComponent<Animator>().SetBool("PopUpOpen", true);
+        popUpFilter.GetComponent<Animator>().SetBool("PopUpFilterOpen", true);
+        popUpClose.GetComponent<Animator>().SetBool("PopUpCloseOpen", true);
     }
 
     public static int getLevel() {

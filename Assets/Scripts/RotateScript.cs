@@ -6,8 +6,8 @@ public class RotateScript : MonoBehaviour
 {
     Vector3 start;
     Vector3 end;
-    Vector3 vecStart = new Vector3(1, 1, 1);
-    Vector3 vecEnd = new Vector3(2, 2, 2);
+    Vector3 vecStart = new Vector3(1, 2, 1);
+    Vector3 vecEnd = new Vector3(2, 3, 2);
     bool moving = false;
     float timer = 0.0f;
     // Start is called before the first frame update

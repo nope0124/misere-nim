@@ -13,12 +13,17 @@ public class NumberScript : MonoBehaviour
     public Text yellowText;
     public Text redText;
     public GameObject[] Pawn;
+    public GameObject fade;
+    bool fadeOut = false;
+    bool fadeIn = true;
+    float fadeCount = 1.0f;
 
     int curCount = 0;
     const int pawnCount = 16;
     // Start is called before the first frame update
     void Start()
     {
+        fade.SetActive(true);
         for (int i = 0; i < 3; i++) {
             if (i == curCount) {
                 Pawn[i].SendMessage("toBig");
@@ -43,6 +48,28 @@ public class NumberScript : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (fadeIn) {
+            fadeCount -= Time.deltaTime * 2;
+            blueText.text = blueCount.ToString();
+            yellowText.text = yellowCount.ToString();
+            redText.text = redCount.ToString();
+            fade.GetComponent<Image>().color = new Color((float)50.0f/255.0f, (float)50.0f/255.0f, (float)50.0f/255.0f, Mathf.Max(0.0f, fadeCount));
+            if (fadeCount < 0.0f) {
+                fadeCount = 0.0f;
+                fade.SetActive(false);
+                fadeIn = false;
+            }
+            return;
+        }
+        if (fadeOut) {
+            fadeCount += Time.deltaTime * 2;
+            fade.GetComponent<Image>().color = new Color((float)50.0f/255.0f, (float)50.0f/255.0f, (float)50.0f/255.0f, Mathf.Min(1.0f, fadeCount));
+            if (fadeCount > 1.1f) {
+                fadeCount = 1.0f;
+                SceneManager.LoadScene("Start");
+            }
+            return;
+        }
         if (Input.GetKeyDown(KeyCode.LeftArrow)) {
             curCount = (curCount + 2) % 3;
             for (int i = 0; i < 3; i++) {
@@ -161,7 +188,8 @@ public class NumberScript : MonoBehaviour
     }
 
     public void toTitle() {
-        SceneManager.LoadScene("Start");
+        fade.SetActive(true);
+        fadeOut = true;
     }
 
     public void blueButton() {
