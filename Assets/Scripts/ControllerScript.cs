@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using GoogleMobileAds.Api;
 
 public class ControllerScript : MonoBehaviour
 {
     // Start is called before the first frame update
+    private BannerView bannerView;
     static int level = 0;
     public GameObject game;
     public GameObject gameEnglish;
@@ -28,7 +30,26 @@ public class ControllerScript : MonoBehaviour
         level1Text.SetActive(false);
         level2Text.SetActive(false);
         level3Text.SetActive(false);
+        MobileAds.Initialize(initStatus => { });
+        this.RequestBanner();
     }
+
+    private void RequestBanner()
+    {
+        #if UNITY_IPHONE
+            string adUnitId = "ca-app-pub-3940256099942544/2934735716";
+        #else
+            string adUnitId = "unexpected_platform";
+        #endif
+
+        // Create a 320x50 banner at the top of the screen.
+        this.bannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.BottomRight);
+        AdRequest request = new AdRequest.Builder().Build();
+
+        // Load the banner with the request.
+        this.bannerView.LoadAd(request);
+    }
+
 
     // Update is called once per frame
     public GameObject popUp;
@@ -68,6 +89,7 @@ public class ControllerScript : MonoBehaviour
         fade.SetActive(true);
         fadeOut = true;
         optionFlag = true;
+        bannerView.Destroy();
     }
     
     public void startButton(){
@@ -83,18 +105,21 @@ public class ControllerScript : MonoBehaviour
         level = 2;
         fade.SetActive(true);
         fadeOut = true;
+        bannerView.Destroy();
     }
 
     public void level2() {
         level = 1;
         fade.SetActive(true);
         fadeOut = true;
+        bannerView.Destroy();
     }
 
     public void level3() {
         level = 0;
         fade.SetActive(true);
         fadeOut = true;
+        bannerView.Destroy();
     }
 
     public void popUpOnButton() {

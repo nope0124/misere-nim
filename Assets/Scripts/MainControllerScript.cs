@@ -5,11 +5,18 @@ using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
 using TMPro;
+using GoogleMobileAds.Api;
 
 
 public class MainControllerScript : MonoBehaviour
 {
-    int time = 0;
+    private BannerView bannerView;
+    private InterstitialAd interstitial;
+    private int showingCount = 0;
+    bool showingFlag = false;
+    bool retryFlag = false;
+    bool hadRetryFlag = false;
+    public string loadEventParam; // 読込イベント名(遷移元で渡されるゴロ)
     int enemyCurCount = 0;
     int enemyCurIndex = 0;
     int[] decreaseAlpha = {0, 0, 0};
@@ -46,8 +53,8 @@ public class MainControllerScript : MonoBehaviour
     public GameObject bluePrefab;
     public GameObject yellowPrefab;
     public GameObject redPrefab;
-    public Material[] materialSet;
-    public MeshRenderer[] m;
+    public Image pawnDisplay;
+    public Sprite[] colorSprite;
     Stack<int> stackIndex = new Stack<int>();
     Stack<int> stackCount = new Stack<int>();
     Stack<int> stackLevel = new Stack<int>();
@@ -236,6 +243,7 @@ public class MainControllerScript : MonoBehaviour
     void endJudge() {
         if (colorCount[0] + colorCount[1] + colorCount[2] == 0) {
             isGameOver = true;
+            showingFlag = true;
             return;
         }
         while (colorCount[playerColorIndex] == 0) {
@@ -251,9 +259,7 @@ public class MainControllerScript : MonoBehaviour
     }
 
     void fucMaterial() {
-        for (int i = 0; i < 2; i++) {
-            m[i].material = materialSet[playerColorIndex];
-        }
+        pawnDisplay.sprite = colorSprite[playerColorIndex];
     }
 
     void displayDecrease() {
@@ -328,6 +334,25 @@ public class MainControllerScript : MonoBehaviour
         makePawn(1, saveCount[1]);
         makePawn(2, saveCount[2]);
         init();
+        MobileAds.Initialize(initStatus => { });
+        this.RequestBanner();
+        RequestInterstitial();
+    }
+
+    private void RequestBanner()
+    {
+        #if UNITY_IPHONE
+            string adUnitId = "ca-app-pub-3940256099942544/2934735716";
+        #else
+            string adUnitId = "unexpected_platform";
+        #endif
+
+        // Create a 320x50 banner at the top of the screen.
+        this.bannerView = new BannerView(adUnitId, AdSize.SmartBanner, AdPosition.BottomRight);
+        AdRequest request = new AdRequest.Builder().Build();
+
+        // Load the banner with the request.
+        this.bannerView.LoadAd(request);
     }
 
     void enemyPretendToThink() {
@@ -481,7 +506,12 @@ public class MainControllerScript : MonoBehaviour
             fade.GetComponent<Image>().color = new Color((float)50.0f/255.0f, (float)50.0f/255.0f, (float)50.0f/255.0f, Mathf.Min(1.0f, fadeCount));
             if (fadeCount > 1.1f) {
                 fadeCount = 1.0f;
-                SceneManager.LoadScene("Start");
+                if (interstitial.IsLoaded() && showingCount > 0 && hadRetryFlag == false) {
+                    interstitial.Show();
+                    showingCount = 0;
+                } else {
+                    SceneManager.LoadScene("Start");
+                }
             }
             return;
         }
@@ -581,6 +611,10 @@ public class MainControllerScript : MonoBehaviour
             redText.text = colorCount[2].ToString();
             runText.text = runCount.ToString();
         } else {
+            if (showingFlag == true) {
+                showingCount++;
+                showingFlag = false;
+            }
             thinkText.enabled = false;
             loadingImage.enabled = false;
             blueText.text = "0";
@@ -598,6 +632,83 @@ public class MainControllerScript : MonoBehaviour
 
         }
         
+    }
+
+    private void RequestInterstitial()
+    {
+        // ★リリース時に自分のIDに変更する
+        #if UNITY_IPHONE
+            string adUnitId = "ca-app-pub-3940256099942544/4411468910";
+        #else
+            string adUnitId = "unexpected_platform";
+        #endif
+
+        // Initialize an InterstitialAd.
+        interstitial = new InterstitialAd(adUnitId);
+
+        // Called when an ad request has successfully loaded.
+        this.interstitial.OnAdLoaded += HandleOnAdLoaded;
+        // Called when an ad request failed to load.
+        this.interstitial.OnAdFailedToLoad += HandleOnAdFailedToLoad;
+        // Called when an ad is shown.
+        this.interstitial.OnAdOpening += HandleOnAdOpened;
+        // Called when the ad is closed.
+        this.interstitial.OnAdClosed += HandleOnAdClosed;
+        // Called when the ad click caused the user to leave the application.
+        this.interstitial.OnAdDidRecordImpression += HandleOnAdLeavingApplication;
+
+        // Create an empty ad request.
+        AdRequest request = new AdRequest.Builder().Build();
+        // Load the interstitial with the request.
+        interstitial.LoadAd(request);
+    }
+
+    // シーン遷移処理
+    private void LoadNextScene()
+    {
+        SceneManager.LoadScene("Start");
+    }
+
+    private void OnDestroy()
+    {
+        // オブジェクトの破棄
+        interstitial.Destroy();
+    }
+
+    // ---以下、イベントハンドラー
+    
+    // 広告の読み込み完了時
+    public void HandleOnAdLoaded(object sender, System.EventArgs args)
+    {
+    }
+
+    // 広告の読み込み失敗時
+    public void HandleOnAdFailedToLoad(object sender, AdFailedToLoadEventArgs args)
+    {
+        // 次のシーンに遷移
+        LoadNextScene();
+    }
+
+    // 広告がデバイスの画面いっぱいに表示されたとき
+    public void HandleOnAdOpened(object sender, System.EventArgs args)
+    {
+    }
+
+    // 広告を閉じたとき
+    public void HandleOnAdClosed(object sender, System.EventArgs args)
+    {
+        // 次のシーンに遷移
+        if (retryFlag == true) {
+            retryFlag = false;
+            RequestInterstitial();
+        } else {
+            LoadNextScene();
+        }
+    }
+    
+    // 別のアプリ（Google Play ストアなど）を起動した時
+    public void HandleOnAdLeavingApplication(object sender, System.EventArgs args)
+    {
     }
     
 
@@ -640,6 +751,13 @@ public class MainControllerScript : MonoBehaviour
 
 
     public void retry() {
+        if (showingCount > 1) {
+            retryFlag = true;
+            hadRetryFlag = true;
+            interstitial.Show();
+            showingCount = 0;
+            showingFlag = false;
+        }
         init();
         winText.enabled = false;
         loseText.enabled = false;
@@ -654,6 +772,7 @@ public class MainControllerScript : MonoBehaviour
     public void toTitle() {
         fade.SetActive(true);
         fadeOut = true;
+        bannerView.Destroy();
         // SceneManager.LoadScene("Start");
     }
 }

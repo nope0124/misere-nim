@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.SceneManagement;
+using GoogleMobileAds.Api;
 
 public class NumberScript : MonoBehaviour
 {
+    private BannerView bannerView;
     static int blueCount = 7;
     static int yellowCount = 6;
     static int redCount = 2;
@@ -31,6 +33,24 @@ public class NumberScript : MonoBehaviour
                 Pawn[i].SendMessage("toSmall");
             }
         }
+        MobileAds.Initialize(initStatus => { });
+        this.RequestBanner();
+    }
+
+    private void RequestBanner()
+    {
+        #if UNITY_IPHONE
+            string adUnitId = "ca-app-pub-3940256099942544/2934735716";
+        #else
+            string adUnitId = "unexpected_platform";
+        #endif
+
+        // Create a 320x50 banner at the top of the screen.
+        this.bannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.TopRight);
+        AdRequest request = new AdRequest.Builder().Build();
+
+        // Load the banner with the request.
+        this.bannerView.LoadAd(request);
     }
 
     public static int getBlueCount() {
@@ -190,6 +210,7 @@ public class NumberScript : MonoBehaviour
     public void toTitle() {
         fade.SetActive(true);
         fadeOut = true;
+        bannerView.Destroy();
     }
 
     public void blueButton() {
