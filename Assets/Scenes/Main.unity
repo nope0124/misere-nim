@@ -1117,7 +1117,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1584134276}
-        m_MethodName: runPlayer
+        m_MethodName: RunPlayer
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -1303,7 +1303,7 @@ GameObject:
   - component: {fileID: 341920752}
   - component: {fileID: 341920751}
   m_Layer: 5
-  m_Name: ColorShiftLeft
+  m_Name: ColorChangeLeftButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -1373,12 +1373,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1584134276}
-        m_MethodName: downButton
-        m_Mode: 1
+        m_MethodName: ColorChangeButton
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: -1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -2116,7 +2116,7 @@ GameObject:
   - component: {fileID: 704384953}
   - component: {fileID: 704384952}
   m_Layer: 5
-  m_Name: RunMinus
+  m_Name: RemoveCountMinusButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2186,12 +2186,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1584134276}
-        m_MethodName: minusButton
-        m_Mode: 1
+        m_MethodName: RemoveCountChangeButton
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: -1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -2554,7 +2554,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1584134276}
-        m_MethodName: prevFunc
+        m_MethodName: PrevFunc
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -2858,7 +2858,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1584134276}
-        m_MethodName: retry
+        m_MethodName: Retry
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3109,7 +3109,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1584134276}
-        m_MethodName: nextFunc
+        m_MethodName: NextFunc
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -3201,7 +3201,7 @@ GameObject:
   - component: {fileID: 967412755}
   - component: {fileID: 967412754}
   m_Layer: 5
-  m_Name: ColorShiftRight
+  m_Name: ColorChangeRightButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3271,12 +3271,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1584134276}
-        m_MethodName: upButton
-        m_Mode: 1
+        m_MethodName: ColorChangeButton
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -3460,7 +3460,7 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1950602138877448, guid: 00284cf2de272b74d864cac5ee59c480, type: 3}
       propertyPath: m_Name
-      value: PBR_Table
+      value: Table
       objectReference: {fileID: 0}
     - target: {fileID: 4154779130590934, guid: 00284cf2de272b74d864cac5ee59c480, type: 3}
       propertyPath: m_RootOrder
@@ -4514,7 +4514,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1584134276}
-        m_MethodName: toTitle
+        m_MethodName: ToTitle
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -4840,7 +4840,7 @@ GameObject:
   - component: {fileID: 1584134275}
   - component: {fileID: 1584134276}
   m_Layer: 0
-  m_Name: GameController
+  m_Name: GameManager
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -4872,7 +4872,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 248ed1a393f4a4e8d8f8f06c4e48658d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  loadEventParam: 
   blueText: {fileID: 263310374}
   yellowText: {fileID: 835889518}
   redText: {fileID: 1162441161}
@@ -4988,7 +4987,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1596104764}
   m_Layer: 0
-  m_Name: Models
+  m_Name: Room
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5233,7 +5232,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1729854764}
   m_Layer: 0
-  m_Name: UiLayer
+  m_Name: UILayer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5511,7 +5510,7 @@ GameObject:
   - component: {fileID: 2142423140}
   - component: {fileID: 2142423139}
   m_Layer: 5
-  m_Name: RunPlus
+  m_Name: RemoveCountPlusButton
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -5581,12 +5580,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1584134276}
-        m_MethodName: plusButton
-        m_Mode: 1
+        m_MethodName: RemoveCountChangeButton
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0

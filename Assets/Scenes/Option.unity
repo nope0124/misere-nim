@@ -132,7 +132,7 @@ GameObject:
   m_Component:
   - component: {fileID: 20685725}
   m_Layer: 0
-  m_Name: Models
+  m_Name: Room
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -154,7 +154,7 @@ Transform:
   - {fileID: 1120715441}
   - {fileID: 943871867}
   m_Father: {fileID: 0}
-  m_RootOrder: 10
+  m_RootOrder: 7
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
 --- !u!1 &34164913
 GameObject:
@@ -651,7 +651,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1508447784}
-        m_MethodName: toTitle
+        m_MethodName: ToTitle
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
@@ -894,11 +894,11 @@ PrefabInstance:
     m_Modifications:
     - target: {fileID: 1950602138877448, guid: 00284cf2de272b74d864cac5ee59c480, type: 3}
       propertyPath: m_Name
-      value: PBR_Table
+      value: Table
       objectReference: {fileID: 0}
     - target: {fileID: 4154779130590934, guid: 00284cf2de272b74d864cac5ee59c480, type: 3}
       propertyPath: m_RootOrder
-      value: 9
+      value: 6
       objectReference: {fileID: 0}
     - target: {fileID: 4154779130590934, guid: 00284cf2de272b74d864cac5ee59c480, type: 3}
       propertyPath: m_LocalScale.x
@@ -1042,8 +1042,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1508447784}
-        m_MethodName: blueMinusButton
-        m_Mode: 1
+        m_MethodName: RemoveCountMinusButton
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -1219,6 +1219,39 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 275119214}
   m_CullTransparentMesh: 0
+--- !u!1 &324545639
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 324545640}
+  m_Layer: 0
+  m_Name: Pawns
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &324545640
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 324545639}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children:
+  - {fileID: 886255596}
+  - {fileID: 580349395}
+  - {fileID: 1759993960}
+  m_Father: {fileID: 0}
+  m_RootOrder: 8
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &364438407
 GameObject:
   m_ObjectHideFlags: 0
@@ -1302,12 +1335,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1508447784}
-        m_MethodName: yellowPlusButton
-        m_Mode: 1
+        m_MethodName: RemoveCountPlusButton
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -1748,12 +1781,12 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 324545640}
     m_Modifications:
     - target: {fileID: 1579884460073014199, guid: 3596cc90db6df4d29b383fbbe9bf9fef,
         type: 3}
       propertyPath: m_RootOrder
-      value: 7
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 1579884460073014199, guid: 3596cc90db6df4d29b383fbbe9bf9fef,
         type: 3}
@@ -1823,10 +1856,16 @@ PrefabInstance:
     - target: {fileID: 2208787086956267789, guid: 3596cc90db6df4d29b383fbbe9bf9fef,
         type: 3}
       propertyPath: m_Name
-      value: yellowPawn
+      value: YellowPawn
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 3596cc90db6df4d29b383fbbe9bf9fef, type: 3}
+--- !u!4 &580349395 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 1579884460073014199, guid: 3596cc90db6df4d29b383fbbe9bf9fef,
+    type: 3}
+  m_PrefabInstance: {fileID: 580349394}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &637592591
 GameObject:
   m_ObjectHideFlags: 0
@@ -2043,12 +2082,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1508447784}
-        m_MethodName: redPlusButton
-        m_Mode: 1
+        m_MethodName: RemoveCountPlusButton
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 2
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -2300,17 +2339,17 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 324545640}
     m_Modifications:
     - target: {fileID: 7212273002015108981, guid: ea5b0c4fb774c429abd1d66c5ef2e4ce,
         type: 3}
       propertyPath: m_Name
-      value: redPawn
+      value: RedPawn
       objectReference: {fileID: 0}
     - target: {fileID: 8024557715213809103, guid: ea5b0c4fb774c429abd1d66c5ef2e4ce,
         type: 3}
       propertyPath: m_RootOrder
-      value: 6
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8024557715213809103, guid: ea5b0c4fb774c429abd1d66c5ef2e4ce,
         type: 3}
@@ -2379,6 +2418,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: ea5b0c4fb774c429abd1d66c5ef2e4ce, type: 3}
+--- !u!4 &886255596 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 8024557715213809103, guid: ea5b0c4fb774c429abd1d66c5ef2e4ce,
+    type: 3}
+  m_PrefabInstance: {fileID: 886255595}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &943871866
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -3021,8 +3066,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1508447784}
-        m_MethodName: bluePlusButton
-        m_Mode: 1
+        m_MethodName: RemoveCountPlusButton
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
@@ -3410,12 +3455,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1508447784}
-        m_MethodName: yellowMinusButton
-        m_Mode: 1
+        m_MethodName: RemoveCountMinusButton
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 1
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -3724,12 +3769,12 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1508447784}
-        m_MethodName: redMinusButton
-        m_Mode: 1
+        m_MethodName: RemoveCountMinusButton
+        m_Mode: 3
         m_Arguments:
           m_ObjectArgument: {fileID: 0}
           m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
+          m_IntArgument: 2
           m_FloatArgument: 0
           m_StringArgument: 
           m_BoolArgument: 0
@@ -3901,17 +3946,17 @@ PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
   m_Modification:
-    m_TransformParent: {fileID: 0}
+    m_TransformParent: {fileID: 324545640}
     m_Modifications:
     - target: {fileID: 537446259717965795, guid: f18a95ea606434bac9c93664c3e86e88,
         type: 3}
       propertyPath: m_Name
-      value: bluePawn
+      value: BluePawn
       objectReference: {fileID: 0}
     - target: {fileID: 882340669743062361, guid: f18a95ea606434bac9c93664c3e86e88,
         type: 3}
       propertyPath: m_RootOrder
-      value: 8
+      value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 882340669743062361, guid: f18a95ea606434bac9c93664c3e86e88,
         type: 3}
@@ -3980,6 +4025,12 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f18a95ea606434bac9c93664c3e86e88, type: 3}
+--- !u!4 &1759993960 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 882340669743062361, guid: f18a95ea606434bac9c93664c3e86e88,
+    type: 3}
+  m_PrefabInstance: {fileID: 1759993959}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1 &1815840344
 GameObject:
   m_ObjectHideFlags: 0
@@ -4634,7 +4685,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 1508447784}
-        m_MethodName: randomButton
+        m_MethodName: RandomButton
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

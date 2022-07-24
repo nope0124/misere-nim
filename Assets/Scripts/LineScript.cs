@@ -22,9 +22,9 @@ public class LineScript : MonoBehaviour
     void Update()
     {
         LineRenderer renderer = gameObject.GetComponent<LineRenderer>();
-        if (MainControllerScript.getIsGameOver() == false) {
-            if (MainControllerScript.getIsMyTurn() == true) {
-                if (MainControllerScript.getPlayerColorIndex() == colorType) {
+        if (MainManager.GetIsGameOver() == false) {
+            if (MainManager.GetIsMyTurn() == true) {
+                if (MainManager.GetPlayerColorIndex() == colorType) {
                     renderer.SetPosition(0, new Vector3(7.0f + 14f * (colorType - 1), 0.8f, 12.0f));
                     renderer.SetPosition(1, new Vector3(-7.0f + 14f * (colorType - 1), 0.8f, 12.0f));
                     renderer.SetPosition(2, new Vector3(-7.0f + 14f * (colorType - 1), 0.8f, -2.0f));
