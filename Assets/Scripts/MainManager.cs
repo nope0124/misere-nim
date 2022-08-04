@@ -118,31 +118,31 @@ public class MainManager : MonoBehaviour
         }
     }
 
-    public static int[] GetBlueVec() {
-        return blueVec;
-    }
+    // public static int[] GetBlueVec() {
+    //     return blueVec;
+    // }
 
-    public static int[] GetYellowVec() {
-        return yellowVec;
-    }
+    // public static int[] GetYellowVec() {
+    //     return yellowVec;
+    // }
 
-    public static int[] GetRedVec() {
-        return redVec;
-    }
+    // public static int[] GetRedVec() {
+    //     return redVec;
+    // }
 
-    public static int GetPlayerColorIndex() {
+    public int GetPlayerColorIndex() {
         return playerColorIndex;
     }
 
-    public static int GetEnemyColorIndex() {
+    public int GetEnemyColorIndex() {
         return enemyColorIndex;
     }
 
-    public static bool GetIsMyTurn() {
+    public bool GetIsMyTurn() {
         return isMyTurn;
     }
 
-    public static bool GetIsGameOver() {
+    public bool GetIsGameOver() {
         return isGameOver;
     }
     // void displayGotPawn(int curIndex, int curCount, int type) {
@@ -317,10 +317,10 @@ public class MainManager : MonoBehaviour
     {
         fade.SetActive(true);
         mainCamera = Camera.main;
-        level = saveLevel = StartManager.GetLevel(); //レベル取得
-        colorCount[0] = saveCount[0] = OptionManager.GetColorCount(0); //青の本数取得
-        colorCount[1] = saveCount[1] = OptionManager.GetColorCount(1); //黄の本数取得
-        colorCount[2] = saveCount[2] = OptionManager.GetColorCount(2); //赤の本数取得
+        level = saveLevel = new StartManager().GetLevel(); //レベル取得
+        colorCount[0] = saveCount[0] = new OptionManager().GetColorCount(0); //青の本数取得
+        colorCount[1] = saveCount[1] = new OptionManager().GetColorCount(1); //黄の本数取得
+        colorCount[2] = saveCount[2] = new OptionManager().GetColorCount(2); //赤の本数取得
         //配列のサイズ変更
         System.Array.Resize(ref blueVec, saveCount[0]);
         System.Array.Resize(ref yellowVec, saveCount[1]);

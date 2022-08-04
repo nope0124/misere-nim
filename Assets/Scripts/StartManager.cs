@@ -10,15 +10,15 @@ public class StartManager : MonoBehaviour
     
     private BannerView bannerView;
     static int level = 0;
-    public GameObject game;
-    public GameObject gameEnglish;
-    public GameObject startText;
-    public GameObject optionText;
-    public GameObject levelObject;
-    public GameObject fade;
-    public GameObject popUp;
-    public GameObject popUpFilter;
-    public GameObject popUpClose;
+    [SerializeField] GameObject game;
+    [SerializeField] GameObject gameEnglish;
+    [SerializeField] GameObject startText;
+    [SerializeField] GameObject optionText;
+    [SerializeField] GameObject levelObject;
+    [SerializeField] GameObject fade;
+    [SerializeField] GameObject popUp;
+    [SerializeField] GameObject popUpFilter;
+    [SerializeField] GameObject popUpClose;
 
 
     bool fadeOut = false;
@@ -175,7 +175,7 @@ public class StartManager : MonoBehaviour
         popUpClose.GetComponent<Animator>().SetBool("PopUpCloseOpen", true);
     }
 
-    public static int GetLevel() {
+    public int GetLevel() {
         return level;
     }
 

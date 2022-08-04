@@ -106,7 +106,7 @@ public class OptionManager : MonoBehaviour
     ////////    ////////    ////////    ////////    ////////    ////////
     ////////    ////////    ////////    ////////    ////////    ////////
 
-    public static int GetColorCount(int idx) {
+    public int GetColorCount(int idx) {
         return curColorCount[idx];
     }
 
