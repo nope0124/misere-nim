@@ -9,21 +9,15 @@ public class OptionManager : MonoBehaviour
 {
     private BannerView bannerView;
     public static int[] curColorCount = {7, 6, 2};
-    public Text blueText;
-    public Text yellowText;
-    public Text redText;
-    public GameObject[] Pawn;
-    public GameObject fade;
-    bool fadeOut = false;
-    bool fadeIn = true;
-    float fadeCount = 1.0f;
+    [SerializeField] Text[] colorText;
+    [SerializeField] GameObject[] Pawn;
+    [SerializeField] GameObject eventSystem;
 
     int curCount = 0;
     const int pawnCount = 16;
 
     void Start()
     {
-        fade.SetActive(true);
         for(int i = 0; i < 3; i++) {
             if(i == curCount) {
                 Pawn[i].SendMessage("toBig");
@@ -32,37 +26,9 @@ public class OptionManager : MonoBehaviour
             }
         }
         MobileAds.Initialize(initStatus => { });
-        this.RequestBanner();
+        RequestBanner();
     }
 
-
-
-
-
-
-
-
-
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-
-
-
-
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
     private void RequestBanner()
     {
         #if UNITY_IOS
@@ -71,75 +37,24 @@ public class OptionManager : MonoBehaviour
             string adUnitId = "unexpected_platform";
         #endif
 
-        // Create a 320x50 banner at the top of the screen.
-        this.bannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.TopRight);
+        bannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.TopRight);
         AdRequest request = new AdRequest.Builder().Build();
 
-        // Load the banner with the request.
-        this.bannerView.LoadAd(request);
+        bannerView.LoadAd(request);
     }
-
-
-
-
-
-
-
-
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-
-
-
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
 
     public int GetColorCount(int idx) {
         return curColorCount[idx];
     }
 
     public void UpdateText() {
-        blueText.text = curColorCount[0].ToString();
-        yellowText.text = curColorCount[1].ToString();
-        redText.text = curColorCount[2].ToString();
+        for(int i = 0; i < 3; i++) {
+            colorText[i].text = curColorCount[i].ToString();
+        }
     }
 
     void Update()
     {
-        if(fadeIn) {
-            fadeCount -= Time.deltaTime * 2;
-            blueText.text = curColorCount[0].ToString();
-            yellowText.text = curColorCount[1].ToString();
-            redText.text = curColorCount[2].ToString();
-            fade.GetComponent<Image>().color = new Color((float)51.0f/255.0f, (float)51.0f/255.0f, (float)51.0f/255.0f, Mathf.Max(0.0f, fadeCount));
-            if(fadeCount < 0.0f) {
-                fadeCount = 0.0f;
-                fade.SetActive(false);
-                fadeIn = false;
-            }
-            return;
-        }
-        if(fadeOut) {
-            fadeCount += Time.deltaTime * 2;
-            fade.GetComponent<Image>().color = new Color((float)51.0f/255.0f, (float)51.0f/255.0f, (float)51.0f/255.0f, Mathf.Min(1.0f, fadeCount));
-            if(fadeCount > 1.1f) {
-                fadeCount = 1.0f;
-                SceneManager.LoadScene("Start");
-            }
-            return;
-        }
         if(Input.GetKeyDown(KeyCode.LeftArrow)) {
             curCount = (curCount + 2) % 3;
             for(int i = 0; i < 3; i++) {
@@ -153,12 +68,12 @@ public class OptionManager : MonoBehaviour
         if(Input.GetKeyDown(KeyCode.RightArrow)) {
             curCount = (curCount + 1) % 3;
             for(int i = 0; i < 3; i++) {
-            if(i == curCount) {
-                Pawn[i].SendMessage("toBig");
-            }else {
-                Pawn[i].SendMessage("toSmall");
+                if(i == curCount) {
+                    Pawn[i].SendMessage("toBig");
+                }else {
+                    Pawn[i].SendMessage("toSmall");
+                }
             }
-        }
         }
         if(Input.GetKeyDown(KeyCode.UpArrow)) {
             curColorCount[curCount]++;
@@ -202,43 +117,12 @@ public class OptionManager : MonoBehaviour
 
 
     public void ToTitle() {
-        fade.SetActive(true);
-        fadeOut = true;
         bannerView.Destroy();
+        eventSystem.SetActive(false);
+        FadeManager.Instance.LoadScene(0.5f, "Start");
     }
 
-    // public void BlueButton() {
-    //     curCount = 0;
-    //     for(int i = 0; i < 3; i++) {
-    //         if(i == curCount) {
-    //             Pawn[i].SendMessage("toBig");
-    //         }else {
-    //             Pawn[i].SendMessage("toSmall");
-    //         }
-    //     }
-    // }
 
-    // public void YellowButton() {
-    //     curCount = 1;
-    //     for(int i = 0; i < 3; i++) {
-    //         if(i == curCount) {
-    //             Pawn[i].SendMessage("toBig");
-    //         }else {
-    //             Pawn[i].SendMessage("toSmall");
-    //         }
-    //     }
-    // }
-
-    // public void RedButton() {
-    //     curCount = 2;
-    //     for(int i = 0; i < 3; i++) {
-    //         if(i == curCount) {
-    //             Pawn[i].SendMessage("toBig");
-    //         }else {
-    //             Pawn[i].SendMessage("toSmall");
-    //         }
-    //     }
-    // }
 
     public void RandomButton() {
         while(true) {
@@ -251,6 +135,5 @@ public class OptionManager : MonoBehaviour
             }
             if((int)(curColorCount[0] ^ (curColorCount[1] ^ curColorCount[2])) != 0) break;
         }
-        
     }
 }

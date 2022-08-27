@@ -20,11 +20,6 @@ public class LineGoodScript : MonoBehaviour
             renderer.material = defaultColor;
             renderer.SetWidth(0.2f, 0.2f);
         }
-        
-    }
-
-    void Update()
-    {
     }
     
 }

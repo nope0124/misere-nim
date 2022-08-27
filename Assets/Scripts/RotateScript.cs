@@ -10,13 +10,7 @@ public class RotateScript : MonoBehaviour
     Vector3 vecEnd = new Vector3(2, 3, 2);
     bool moving = false;
     float timer = 0.0f;
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
 
-    // Update is called once per frame
     void Update()
     {
         transform.Rotate(0, 2, 0, Space.World);

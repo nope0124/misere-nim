@@ -10,65 +10,21 @@ public class StartManager : MonoBehaviour
     
     private BannerView bannerView;
     static int level = 0;
-    [SerializeField] GameObject game;
-    [SerializeField] GameObject gameEnglish;
-    [SerializeField] GameObject startText;
-    [SerializeField] GameObject optionText;
-    [SerializeField] GameObject levelObject;
-    [SerializeField] GameObject fade;
+    [SerializeField] GameObject titleLogo;
+    [SerializeField] GameObject startButton;
+    [SerializeField] GameObject levelButton;
     [SerializeField] GameObject popUp;
     [SerializeField] GameObject popUpFilter;
     [SerializeField] GameObject popUpClose;
+    [SerializeField] GameObject eventSystem;
 
-
-    bool fadeOut = false;
-    bool fadeIn = true;
-    float fadeCount = 1.0f;
-    bool optionFlag = false;
     public static bool isIDFA = false;
 
-
     void Start() {
-        fade.SetActive(true);
-        game.SetActive(true);
-        gameEnglish.SetActive(true);
-        startText.SetActive(true);
-        levelObject.SetActive(false);
         MobileAds.Initialize(initStatus => { });
-        this.RequestBanner();
+        RequestBanner();
     }
 
-
-
-
-
-
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
 
     private void RequestBanner()
     {
@@ -78,86 +34,31 @@ public class StartManager : MonoBehaviour
             string adUnitId = "unexpected_platform";
         #endif
 
-        this.bannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.BottomRight);
+        bannerView = new BannerView(adUnitId, AdSize.Banner, AdPosition.BottomRight);
         AdRequest request = new AdRequest.Builder().Build();
 
-        this.bannerView.LoadAd(request);
+        bannerView.LoadAd(request);
     }
 
 
-
-
-
-
-
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-    ////////    ////////    ////////    ////////    ////////    ////////
-
-    
-    void Update()
-    {
-        if (fadeIn) {
-            fadeCount -= Time.deltaTime * 2;
-            fade.GetComponent<Image>().color = new Color((float)51.0f/255.0f, (float)51.0f/255.0f, (float)51.0f/255.0f, Mathf.Max(0.0f, fadeCount));
-            if (fadeCount < 0.0f) {
-                fadeCount = 0.0f;
-                fade.SetActive(false);
-                fadeIn = false;
-            }
-            return;
-        }
-        if (fadeOut) {
-            fadeCount += Time.deltaTime * 2;
-            fade.GetComponent<Image>().color = new Color((float)51.0f/255.0f, (float)51.0f/255.0f, (float)51.0f/255.0f, Mathf.Min(1.0f, fadeCount));
-            if (fadeCount > 1.1f) {
-                fadeCount = 1.0f;
-                if (optionFlag) {
-                    SceneManager.LoadScene("Option");
-                } else {
-                    SceneManager.LoadScene("Main");
-                }
-                
-            }
-            return;
-        }
-
-
-    }
 
     public void OptionButton(){
-        fade.SetActive(true);
-        fadeOut = true;
-        optionFlag = true;
         bannerView.Destroy();
+        eventSystem.SetActive(false);
+        FadeManager.Instance.LoadScene(0.5f, "Option");
     }
     
     public void StartButton(){
-        game.SetActive(false);
-        gameEnglish.SetActive(false);
-        startText.SetActive(false);
-        levelObject.SetActive(true);
+        titleLogo.SetActive(false);
+        startButton.SetActive(false);
+        levelButton.SetActive(true);
     }
 
     public void SetLevel(int num) {
         level = 3 - num;
-        fade.SetActive(true);
-        fadeOut = true;
         bannerView.Destroy();
+        eventSystem.SetActive(false);
+        FadeManager.Instance.LoadScene(0.5f, "Main");
     }
 
     public void PopUpOnButton() {

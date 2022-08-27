@@ -12,7 +12,8 @@ public class MainManager : MonoBehaviour
 {
     private BannerView bannerView;
     private InterstitialAd interstitial;
-    private int showingCount = 0;
+    [SerializeField] GameObject eventSystem;
+    static int showingCount = 0;
     bool showingFlag = false;
     bool retryFlag = false;
     bool hadRetryFlag = false;
@@ -118,17 +119,6 @@ public class MainManager : MonoBehaviour
         }
     }
 
-    // public static int[] GetBlueVec() {
-    //     return blueVec;
-    // }
-
-    // public static int[] GetYellowVec() {
-    //     return yellowVec;
-    // }
-
-    // public static int[] GetRedVec() {
-    //     return redVec;
-    // }
 
     public int GetPlayerColorIndex() {
         return playerColorIndex;
@@ -145,51 +135,7 @@ public class MainManager : MonoBehaviour
     public bool GetIsGameOver() {
         return isGameOver;
     }
-    // void displayGotPawn(int curIndex, int curCount, int type) {
-    //     if (type == 0) {
-    //         for (int i = 0; i < curCount; i++) {
-    //             switch (curIndex) {
-    //                 case 0:
-    //                     gotPawnPlayer[gotPawnIndex, i] = Instantiate(bluePrefab, new Vector3(-24 - 3 * gotPawnIndex, 0.0f, 0 - i * 3), Quaternion.identity) as GameObject;
-    //                     break;
-    //                 case 1:
-    //                     gotPawnPlayer[gotPawnIndex, i] = Instantiate(yellowPrefab, new Vector3(-24 - 3 * gotPawnIndex, 0.0f, 0 - i * 3), Quaternion.identity) as GameObject;
-    //                     break;
-    //                 case 2:
-    //                     gotPawnPlayer[gotPawnIndex, i] = Instantiate(redPrefab, new Vector3(-24 - 3 * gotPawnIndex, 0.0f, 0 - i * 3), Quaternion.identity) as GameObject;
-    //                     break;
-    //             }
-    //             gotPawnPlayer[gotPawnIndex, i].SetActive(true);
-    //         }
-    //     } else if (type == 1) {
-    //         for (int i = 0; i < curCount; i++) {
-    //             switch (curIndex) {
-    //                 case 0:
-    //                     gotPawnEnemy[gotPawnIndex, i] = Instantiate(bluePrefab, new Vector3(24 + 3 * gotPawnIndex, 0.0f, 10 + i * 3), Quaternion.identity) as GameObject;
-    //                     break;
-    //                 case 1:
-    //                     gotPawnEnemy[gotPawnIndex, i] = Instantiate(yellowPrefab, new Vector3(24 + 3 * gotPawnIndex, 0.0f, 10 + i * 3), Quaternion.identity) as GameObject;
-    //                     break;
-    //                 case 2:
-    //                     gotPawnEnemy[gotPawnIndex, i] = Instantiate(redPrefab, new Vector3(24 + 3 * gotPawnIndex, 0.0f, 10 + i * 3), Quaternion.identity) as GameObject;
-    //                     break;
-    //             }
-    //             gotPawnEnemy[gotPawnIndex, i].SetActive(true);
-    //         }
-    //     } else if (type == 2) {
-    //         for (int i = 0; i < 16; i++) {
-    //             if (gotPawnPlayer[gotPawnIndex, i] != null) {
-    //                 gotPawnPlayer[gotPawnIndex, i].SetActive(false);
-    //                 gotPawnPlayer[gotPawnIndex, i] = null;
-    //             }
-    //             if (gotPawnEnemy[gotPawnIndex, i] != null) {
-    //                 gotPawnEnemy[gotPawnIndex, i].SetActive(false);
-    //                 gotPawnEnemy[gotPawnIndex, i] = null;
-    //             }
-    //         }
-    //     }
-        
-    // }
+    
 
     public void PrevFunc() {
         if (!isMyTurn || isGameOver) return;
@@ -308,14 +254,9 @@ public class MainManager : MonoBehaviour
         retryButton.SetActive(false);
     }
 
-    public GameObject fade;
-    bool fadeOut = false;
-    bool fadeIn = true;
-    float fadeCount = 1.0f;
 
     void Start()
     {
-        fade.SetActive(true);
         mainCamera = Camera.main;
         level = saveLevel = new StartManager().GetLevel(); //レベル取得
         colorCount[0] = saveCount[0] = new OptionManager().GetColorCount(0); //青の本数取得
@@ -515,34 +456,34 @@ public class MainManager : MonoBehaviour
 
     void Update()
     {
-        if (fadeIn) {
-            fadeCount -= Time.deltaTime * 2;
-            blueText.text = colorCount[0].ToString();
-            yellowText.text = colorCount[1].ToString();
-            redText.text = colorCount[2].ToString();
-            runText.text = runCount.ToString();
-            fade.GetComponent<Image>().color = new Color((float)50.0f/255.0f, (float)50.0f/255.0f, (float)50.0f/255.0f, Mathf.Max(0.0f, fadeCount));
-            if (fadeCount < 0.0f) {
-                fadeCount = 0.0f;
-                fade.SetActive(false);
-                fadeIn = false;
-            }
-            return;
-        }
-        if (fadeOut) {
-            fadeCount += Time.deltaTime * 2;
-            fade.GetComponent<Image>().color = new Color((float)50.0f/255.0f, (float)50.0f/255.0f, (float)50.0f/255.0f, Mathf.Min(1.0f, fadeCount));
-            if (fadeCount > 1.1f) {
-                fadeCount = 1.0f;
-                if (interstitial.IsLoaded() && showingCount > 0 && hadRetryFlag == false) {
-                    interstitial.Show();
-                    showingCount = 0;
-                } else {
-                    SceneManager.LoadScene("Start");
-                }
-            }
-            return;
-        }
+        // if (fadeIn) {
+        //     fadeCount -= Time.deltaTime * 2;
+        //     blueText.text = colorCount[0].ToString();
+        //     yellowText.text = colorCount[1].ToString();
+        //     redText.text = colorCount[2].ToString();
+        //     runText.text = runCount.ToString();
+        //     fade.GetComponent<Image>().color = new Color((float)50.0f/255.0f, (float)50.0f/255.0f, (float)50.0f/255.0f, Mathf.Max(0.0f, fadeCount));
+        //     if (fadeCount < 0.0f) {
+        //         fadeCount = 0.0f;
+        //         fade.SetActive(false);
+        //         fadeIn = false;
+        //     }
+        //     return;
+        // }
+        // if (fadeOut) {
+        //     fadeCount += Time.deltaTime * 2;
+        //     fade.GetComponent<Image>().color = new Color((float)50.0f/255.0f, (float)50.0f/255.0f, (float)50.0f/255.0f, Mathf.Min(1.0f, fadeCount));
+        //     if (fadeCount > 1.1f) {
+        //         fadeCount = 1.0f;
+        //         if (interstitial.IsLoaded() && showingCount > 0 && hadRetryFlag == false) {
+        //             interstitial.Show();
+        //             showingCount = 0;
+        //         } else {
+        //             SceneManager.LoadScene("Start");
+        //         }
+        //     }
+        //     return;
+        // }
         DisplayDecrease();
         for (int i = 0; i < saveCount[0]; i++) {
             if (blueVec[i] == 1) bluePawn[i].SetActive(true);
@@ -861,9 +802,8 @@ public class MainManager : MonoBehaviour
     }
 
     public void ToTitle() {
-        fade.SetActive(true);
-        fadeOut = true;
         bannerView.Destroy();
-        SceneManager.LoadScene("Start");
+        eventSystem.SetActive(false);
+        FadeManager.Instance.LoadScene(0.5f, "Start");
     }
 }
